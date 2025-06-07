@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import API from '../../services/api';
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
+  const navigate = useNavigate();
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,6 +17,7 @@ const Login = () => {
       const res = await API.post('/auth/login', form);
       alert(res.data.message);
       localStorage.setItem('token', res.data.token);  // Store JWT
+      navigate("/challenges");
     } catch (err) {
       alert(err.response?.data?.message || 'Login failed');
     }
