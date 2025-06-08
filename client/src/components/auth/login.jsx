@@ -1,42 +1,144 @@
 import React, { useState } from 'react';
-import API from '../../services/api';
-import {Link, useNavigate} from 'react-router-dom'
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  Box,
+  TextField,
+  Button,
+  Typography,
+} from '@mui/material';
+import sideImage from '../../assets/side-image.jpeg';
+import { login as loginService } from '../../services/api';
+import Navbar from './Navbar';
 
-const Login = () => {
-  const [form, setForm] = useState({ email: '', password: '' });
+const LoginPage = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      const res = await API.post('/auth/login', form);
-      alert(res.data.message);
-      localStorage.setItem('token', res.data.token);  // Store JWT
-      navigate("/challenges");
+      const res = await loginService(formData);
+      if (!res.data.token) {
+        setError(res.data.message || 'Login failed');
+        return;
+      }
+      localStorage.setItem('token', res.data.token);
+      navigate('/challenges');
     } catch (err) {
-      alert(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || 'Server error');
     }
   };
 
   return (
-    <Box width={300} mx="auto" mt={5}>
-      <Typography variant="h5">Login</Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField label="Email" name="email" fullWidth margin="normal" onChange={handleChange} />
-        <TextField label="Password" name="password" type="password" fullWidth margin="normal" onChange={handleChange} />
-        <Button type="submit" variant="contained" color="primary" fullWidth>Login</Button>
-      </form>
-      <Typography variant="body2" align="center" mt={2}>
-        Don't have an account?{' '}
-        <Link to="/signup">Signup</Link>
-      </Typography>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100vh',
+      backgroundColor: '#f5f5f5'
+    }}>
+      {/* Top Navigation Bar */}
+      <Navbar></Navbar>
+
+      {/* Main Content - Two Equal Columns */}
+      <Box sx={{
+        display: 'flex',
+        flex: 1,
+        overflow: 'hidden'
+      }}>
+        {/* Left Side - Background Image */}
+        <Box sx={{ 
+          flex: 1,
+          display: { xs: 'none', md: 'block' },
+          backgroundImage: `url(${sideImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }} />
+
+        {/* Right Side - Login Form */}
+        <Box sx={{ 
+          flex: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(255,255,255,0.9)',
+          overflowY: 'auto',
+          padding: '20px'
+        }}>
+          <Box sx={{ 
+            width: '100%',
+            maxWidth: '400px',
+            padding: '40px'
+          }}>
+            <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
+              Sign in
+            </Typography>
+            
+            <form onSubmit={handleSubmit}>
+              <TextField
+                fullWidth
+                label="Email"
+                variant="outlined"
+                margin="normal"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                sx={{ mb: 3 }}
+              />
+              
+              <TextField
+                fullWidth
+                label="Password"
+                type="password"
+                variant="outlined"
+                margin="normal"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                sx={{ mb: 3 }}
+              />
+
+              {error && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                  {error}
+                </Typography>
+              )}
+              
+              <Button
+                fullWidth
+                type="submit"
+                variant="contained"
+                sx={{
+                  py: 1.5,
+                  mb: 2,
+                  backgroundColor: 'black',
+                  '&:hover': { backgroundColor: '#333' }
+                }}
+              >
+                Sign in
+              </Button>
+            </form>
+            
+            <Typography align="center">
+              Don't have an account?{' '}
+              <Link to="/signup" style={{ color: 'black', fontWeight: 'bold' }}>
+                Sign up
+              </Link>
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };
 
-export default Login;
+export default LoginPage;
