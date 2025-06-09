@@ -1,4 +1,5 @@
 const Challenge = require('../models/Challenge');
+const User = require('../models/User')
 
 exports.createChallenge = async (req, res) => {
     const { title, description, totalDays } = req.body;
@@ -59,8 +60,27 @@ exports.joinChallenge = async (req, res) => {
         challenge.participantCount = challenge.participants.length;
         await challenge.save();
 
+         await User.findByIdAndUpdate(
+            userId,
+            { $addToSet: { joinedChallenges: challengeId } }
+        );
+
         res.status(200).json({ message: 'Joined challenge successfully', challenge });
     } catch (err) {
         res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
+
+exports.getUserJoinedChallenges = async (req, res) => {
+    const userId = req.user.userId; // Assumes you have authentication middleware that sets req.user
+
+    try {
+        const user = await User.findById(userId).populate('joinedChallenges');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json(user.joinedChallenges);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error', error: err.message });
+    }
+}

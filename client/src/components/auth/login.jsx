@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import sideImage from '../../assets/side-image.jpeg';
 import { login as loginService } from '../../services/api';
-import Navbar from './Navbar';
+import Navbar from '../Navbar';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({

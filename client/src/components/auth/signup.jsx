@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import sideImage from '../../assets/signupImage.jpeg';
 import { signup as signupService } from '../../services/api';
-import Navbar from './Navbar'; // Assuming you have a Navbar component
+import Navbar from '../Navbar'; // Assuming you have a Navbar component
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({

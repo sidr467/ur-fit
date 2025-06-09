@@ -1,10 +1,25 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API = axios.create({
-  baseURL: 'http://localhost:3002/api',
+  baseURL: "http://localhost:3002/api",
 });
 
-export const signup = (formData) => API.post('/auth/signup', formData);
-export const login = (formData) => API.post('/auth/login', formData);
+export const signup = (formData) => API.post("/auth/signup", formData);
+export const login = (formData) => API.post("/auth/login", formData);
+
+export const getAllChallenges = (token) =>
+  API.get("/challenges", { headers: { Authorization: `Bearer ${token}` } });
+
+export const getJoinedChallenges = (token) =>
+  API.get("/challenges/joined/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const joinChallenge = (challengeId, token) =>
+  API.post(
+    `/challenges/${challengeId}/join`,
+    {},
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
 
 export default API;

@@ -4,7 +4,11 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ['participant', 'coordinator'], required: true }
+  role: { type: String, enum: ['participant', 'coordinator'], required: true },
+  joinedChallenges: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Challenge'
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);
