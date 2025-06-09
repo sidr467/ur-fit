@@ -11,7 +11,7 @@ import {
   FormControl,
   FormLabel
 } from '@mui/material';
-import sideImage from '../../assets/signupImage.jpeg';
+import sideImage from '../../assets/Skipping.png';
 import { signup as signupService } from '../../services/api';
 import Navbar from '../Navbar'; // Assuming you have a Navbar component
 

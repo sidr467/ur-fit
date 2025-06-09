@@ -2,13 +2,25 @@ const Challenge = require('../models/Challenge');
 const User = require('../models/User')
 
 exports.createChallenge = async (req, res) => {
-    const { title, description, totalDays } = req.body;
+    const {
+        title,
+        description,
+        longDescription,
+        totalDays,
+        imageUrl,
+        externalLink,
+        pdfs
+    } = req.body;
 
     try {
         const challenge = new Challenge({
             title,
             description,
-            totalDays
+            longDescription,
+            totalDays,
+            imageUrl,
+            externalLink,
+            pdfs
         });
 
         await challenge.save();
