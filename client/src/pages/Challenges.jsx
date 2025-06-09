@@ -20,7 +20,7 @@ import strengthImg from "../assets/strengthImg.png"
 import hydrationImg from "../assets/hydrationImg.png"
 import stepsImg from "../assets/stepsImg.png"
 import detoxImg from "../assets/digital_detox.png"
-import sleepImg from "../assets/sleep_reset.png" 
+import sleepImg from "../assets/sleep_reset.png"
 import healthyImg from "../assets/healthy_snack.png"
 import stretchingImg from "../assets/morning_stretch.png"
 import yogaImg from "../assets/yoga_beginners.png"
@@ -68,17 +68,17 @@ const Challenges = () => {
   }
 
   useEffect(() => {
-  if (!user) {
-    navigate("/login");
-    return;
-  }
-  if (user.role === "coordinator") {
-    navigate("/coordinator-challenges");
-    return;
-  }
-  fetchAll();
-  fetchJoined();
-}, []);
+    if (!user) {
+      navigate("/login")
+      return
+    }
+    if (user.role === "coordinator") {
+      navigate("/coordinator-challenges")
+      return
+    }
+    fetchAll()
+    fetchJoined()
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("token")
@@ -116,43 +116,45 @@ const Challenges = () => {
               {allChallenges.length === 0 ? (
                 <Typography>No challenges found.</Typography>
               ) : (
-                allChallenges.map((challenge) => (
-                  <Paper key={challenge._id} sx={{ p: 2, mb: 2 }}>
-                    {challenge.imageUrl && (
-                      <img
-                        src={imageMap[challenge.title] || challenge.imageUrl}
-                        alt={challenge.title}
-                        style={{
-                          width: 300,
-                          height: 300,
-                          objectFit: "cover",
-                          marginBottom: 8,
-                          borderRadius: 8,
-                          display: "block",
-                        }}
-                      />
-                    )}
-                    <Typography variant="h6">{challenge.title}</Typography>
-                    <Typography>{challenge.description}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Total Days: {challenge.totalDays} | Participants:{" "}
-                      {challenge.participantCount}
-                    </Typography>
-                    {isJoined(challenge._id) ? (
-                      <Button disabled sx={{ mt: 1 }}>
-                        Joined
-                      </Button>
-                    ) : (
-                      <Button
-                        sx={{ mt: 1 }}
-                        variant="contained"
-                        onClick={() => handleJoin(challenge._id)}
-                      >
-                        Join
-                      </Button>
-                    )}
-                  </Paper>
-                ))
+                allChallenges
+                  .filter((challenge) => !isJoined(challenge._id))
+                  .map((challenge) => (
+                    <Paper key={challenge._id} sx={{ p: 2, mb: 2 }}>
+                      {challenge.imageUrl && (
+                        <img
+                          src={imageMap[challenge.title] || challenge.imageUrl}
+                          alt={challenge.title}
+                          style={{
+                            width: 300,
+                            height: 300,
+                            objectFit: "cover",
+                            marginBottom: 8,
+                            borderRadius: 8,
+                            display: "block",
+                          }}
+                        />
+                      )}
+                      <Typography variant="h6">{challenge.title}</Typography>
+                      <Typography>{challenge.description}</Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Total Days: {challenge.totalDays} | Participants:{" "}
+                        {challenge.participantCount}
+                      </Typography>
+                      {isJoined(challenge._id) ? (
+                        <Button disabled sx={{ mt: 1 }}>
+                          Joined
+                        </Button>
+                      ) : (
+                        <Button
+                          sx={{ mt: 1 }}
+                          variant="contained"
+                          onClick={() => handleJoin(challenge._id)}
+                        >
+                          Join
+                        </Button>
+                      )}
+                    </Paper>
+                  ))
               )}
             </Box>
           )}
