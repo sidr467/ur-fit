@@ -16,26 +16,6 @@ import {
   getJoinedChallenges,
   joinChallenge,
 } from "../services/api"
-import strengthImg from "../assets/strengthImg.png"
-import hydrationImg from "../assets/hydrationImg.png"
-import stepsImg from "../assets/stepsImg.png"
-import detoxImg from "../assets/digital_detox.png"
-import sleepImg from "../assets/sleep_reset.png"
-import healthyImg from "../assets/healthy_snack.png"
-import stretchingImg from "../assets/morning_stretch.png"
-import yogaImg from "../assets/yoga_beginners.png"
-
-const imageMap = {
-  "Strength and Gym Challenge": strengthImg,
-  "Hydration Challenge": hydrationImg,
-  "10K Steps Challenge": stepsImg,
-  "Digital Hour Detox": detoxImg,
-  "Sleep Reset Challenge": sleepImg,
-  "Healthy Snack Swap": healthyImg,
-  "Mindful Morning Stretch": stretchingImg,
-  "Yoga for Beginners": yogaImg,
-  // Add more as needed
-}
 
 const Challenges = () => {
   const navigate = useNavigate()
@@ -122,7 +102,7 @@ const Challenges = () => {
                     <Paper key={challenge._id} sx={{ p: 2, mb: 2 }}>
                       {challenge.imageUrl && (
                         <img
-                          src={imageMap[challenge.title] || challenge.imageUrl}
+                          src={challenge.imageUrl}
                           alt={challenge.title}
                           style={{
                             width: 300,
@@ -167,7 +147,7 @@ const Challenges = () => {
                   <Paper key={challenge._id} sx={{ p: 2, mb: 2 }}>
                     {challenge.imageUrl && (
                       <img
-                        src={imageMap[challenge.title] || challenge.imageUrl}
+                        src={challenge.imageUrl}
                         alt={challenge.title}
                         style={{
                           width: 300,
