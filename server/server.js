@@ -18,5 +18,8 @@ app.use("/api/auth", require("./routes/authRoutes"))
 const challengeRoutes = require("./routes/challengeRoutes")
 app.use("/api/challenges", challengeRoutes)
 
+const uploadRoutes = require("./routes/uploadImageRoutes");
+app.use("/api/upload", uploadRoutes);
+
 const PORT = process.env.PORT || 5000
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))

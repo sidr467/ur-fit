@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"
 import {
   Dialog,
   DialogTitle,
@@ -6,10 +6,11 @@ import {
   DialogActions,
   TextField,
   Button,
+  Box,
   Typography,
-  IconButton
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+  IconButton,
+} from "@mui/material"
+import CloseIcon from "@mui/icons-material/Close"
 
 const ChallengeModal = ({ open, onClose, onCreate }) => {
   const [form, setForm] = useState({
@@ -19,31 +20,48 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
     totalDays: "",
     imageUrl: "",
     externalLink: "",
-    pdfs: ""
-  });
-  const [error, setError] = useState("");
+    pdfs: "",
+  })
+  const [error, setError] = useState("")
+  const [imageFile, setImageFile] = useState(null)
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
 
-  const handleSubmit = () => {
-    setError("");
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0])
+  }
+
+  const handleSubmit = async () => {
+    setError("")
+    let imageUrl = form.imageUrl
+
+    if (imageFile) {
+      const data = new FormData()
+      data.append("image", imageFile)
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: data,
+      })
+      const result = await res.json()
+      imageUrl = result.imageUrl
+    }
+
     if (!form.title || !form.description || !form.totalDays) {
-      setError("Title, Description, and Total Days are required.");
-      return;
+      setError("Title, Description, and Total Days are required.")
+      return
     }
     onCreate({
       ...form,
+      imageUrl,
       totalDays: Number(form.totalDays),
       externalLink: form.externalLink
         ? form.externalLink.split(",").map((l) => l.trim())
         : [],
-      pdfs: form.pdfs
-        ? form.pdfs.split(",").map((l) => l.trim())
-        : []
-    });
+      pdfs: form.pdfs ? form.pdfs.split(",").map((l) => l.trim()) : [],
+    })
     setForm({
       title: "",
       description: "",
@@ -51,9 +69,10 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
       totalDays: "",
       imageUrl: "",
       externalLink: "",
-      pdfs: ""
-    });
-  };
+      pdfs: "",
+    })
+    setImageFile(null)
+  }
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
@@ -106,14 +125,12 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           required
         />
-        <TextField
-          margin="normal"
-          label="Image URL"
-          name="imageUrl"
-          fullWidth
-          value={form.imageUrl}
-          onChange={handleChange}
-        />
+        <Box sx={{ my: 2 }}>
+          <Typography variant="body2" sx={{ mb: 1 }}>
+            Upload Image
+          </Typography>
+          <input type="file" accept="image/*" onChange={handleFileChange} />
+        </Box>
         <TextField
           margin="normal"
           label="External Links (comma separated)"
@@ -145,7 +162,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}
 
-export default ChallengeModal;
+export default ChallengeModal
