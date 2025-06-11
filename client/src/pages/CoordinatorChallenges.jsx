@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { Box, Typography, Paper, Button, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  CircularProgress,
+  Container,
+  Grid
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { getAllChallenges, createChallenge } from "../services/api";
 import ChallengeModal from "../components/ChallengeModal";
+import ChallengeCard from "../components/ChallengeCard";
 
 const CoordinatorChallenges = () => {
   const navigate = useNavigate();
@@ -31,7 +39,6 @@ const CoordinatorChallenges = () => {
       return;
     }
     fetchChallenges();
-    // eslint-disable-next-line
   }, []);
 
   const fetchChallenges = async () => {
@@ -41,56 +48,89 @@ const CoordinatorChallenges = () => {
     setLoading(false);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   const handleCreateChallenge = async (challengeData) => {
     try {
       await createChallenge(challengeData, token);
       setModalOpen(false);
       fetchChallenges();
-    } catch {
-      // Optionally handle error
+    } catch (error) {
+      console.error("Error creating challenge:", error);
     }
   };
 
   if (!user || user.role !== "coordinator") return null;
 
   return (
-    <Box p={3}>
-      <Navbar user={user} onLogout={handleLogout} />
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        <Typography variant="h5">Coordinator Challenge Management</Typography>
-        <Button variant="contained" onClick={() => setModalOpen(true)}>
-          Create New Challenge
-        </Button>
-      </Box>
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <Box>
-          {challenges.length === 0 ? (
-            <Typography>No challenges found.</Typography>
-          ) : (
-            challenges.map((challenge) => (
-              <Paper key={challenge._id} sx={{ p: 2, mb: 2 }}>
-                <Typography variant="h6">{challenge.title}</Typography>
-                <Typography>{challenge.description}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Total Days: {challenge.totalDays} | Participants: {challenge.participantCount}
-                </Typography>
-              </Paper>
-            ))
-          )}
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#f9f9f9' }}>
+      <Navbar user={user} />
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+          <Typography variant="h4" sx={{ fontWeight: 700 }}>
+            Coordinator Dashboard
+          </Typography>
+          <Button 
+            variant="contained" 
+            onClick={() => setModalOpen(true)}
+            sx={{
+              backgroundColor: '#000',
+              '&:hover': {
+                backgroundColor: '#333'
+              }
+            }}
+          >
+            Create New Challenge
+          </Button>
         </Box>
-      )}
-      <ChallengeModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onCreate={handleCreateChallenge}
-      />
+
+        {loading ? (
+          <Box display="flex" justifyContent="center" py={10}>
+            <CircularProgress size={60} thickness={4} />
+          </Box>
+        ) : (
+          <Grid container spacing={4} sx={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '32px',
+            '@media (max-width: 1200px)': {
+              gridTemplateColumns: 'repeat(3, 1fr)'
+            },
+            '@media (max-width: 900px)': {
+              gridTemplateColumns: 'repeat(2, 1fr)'
+            },
+            '@media (max-width: 600px)': {
+              gridTemplateColumns: '1fr'
+            }
+          }}>
+            {challenges.length === 0 ? (
+              <Grid item xs={12} sx={{ gridColumn: '1 / -1' }}>
+                <Box textAlign="center" py={6}>
+                  <Typography variant="h6" color="text.secondary">
+                    No challenges created yet
+                  </Typography>
+                </Box>
+              </Grid>
+            ) : (
+              challenges.map((challenge) => (
+                <Box key={challenge._id} sx={{ width: '100%' }}>
+                  <ChallengeCard
+                    challenge={challenge}
+                    isCoordinator={true}
+                    onJoin={() => {}} 
+                    isJoined={false}
+                  />
+                </Box>
+              ))
+            )}
+          </Grid>
+        )}
+
+        {/* Create Challenge Modal */}
+        <ChallengeModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onCreate={handleCreateChallenge}
+        />
+      </Container>
     </Box>
   );
 };
