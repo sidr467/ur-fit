@@ -105,8 +105,8 @@ const Challenges = () => {
                           src={challenge.imageUrl}
                           alt={challenge.title}
                           style={{
-                            width: 300,
-                            height: 300,
+                            width: 200,
+                            height: 200,
                             objectFit: "cover",
                             marginBottom: 8,
                             borderRadius: 8,
@@ -150,8 +150,8 @@ const Challenges = () => {
                         src={challenge.imageUrl}
                         alt={challenge.title}
                         style={{
-                          width: 300,
-                          height: 300,
+                          width: 200,
+                          height: 200,
                           objectFit: "cover",
                           marginBottom: 8,
                           borderRadius: 8,
