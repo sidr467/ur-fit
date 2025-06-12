@@ -117,7 +117,8 @@ const ChallengeCard = ({
             fullWidth
             variant="contained"
             size="medium"
-            onClick={() => onJoin(challenge._id)}
+            component={Link}
+            to={`/challenges/${challenge._id}`}
             sx={{
               height: 42,
               fontWeight: 500,
