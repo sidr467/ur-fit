@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
 import {
   Box,
   Typography,
@@ -8,46 +8,58 @@ import {
   Button,
   Link as MuiLink,
   Chip,
-  Divider
-} from "@mui/material";
-import { getChallengeById } from "../services/api"; // You need to implement this API call
+  Divider,
+} from "@mui/material"
+import { getChallengeById } from "../services/api"
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf"
 
 const ChallengeDetails = () => {
-  const { id } = useParams();
-  const [challenge, setChallenge] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { id } = useParams()
+  const [challenge, setChallenge] = useState(null)
+  const [loading, setLoading] = useState(true)
 
- useEffect(() => {
-  const fetchChallenge = async () => {
-    setLoading(true);
-    try {
-      const challenge = await getChallengeById(id);
-      setChallenge(challenge);
-    } catch (err) {
-      setChallenge(null);
+  useEffect(() => {
+    const fetchChallenge = async () => {
+      setLoading(true)
+      try {
+        const challenge = await getChallengeById(id)
+        setChallenge(challenge)
+      } catch (err) {
+        setChallenge(null)
+      }
+      setLoading(false)
     }
-    setLoading(false);
-  };
-  fetchChallenge();
-}, [id]);
+    fetchChallenge()
+  }, [id])
 
-
-  console.log("Challenge Details:", id);
+  console.log("Challenge Details:", id)
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
         <Typography variant="h6">Loading...</Typography>
       </Box>
-    );
+    )
   }
 
   if (!challenge) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
-        <Typography variant="h6" color="error">Challenge not found.</Typography>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="60vh"
+      >
+        <Typography variant="h6" color="error">
+          Challenge not found.
+        </Typography>
       </Box>
-    );
+    )
   }
 
   return (
@@ -97,27 +109,39 @@ const ChallengeDetails = () => {
         )}
 
         {/* PDFs */}
-        {challenge.pdfs && challenge.pdfs.length > 0 && (
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              PDF Resources
-            </Typography>
-            {challenge.pdfs.map((pdf, idx) => (
-              <MuiLink
-                key={idx}
-                href={pdf}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ display: "block", mb: 1 }}
-              >
-                PDF {idx + 1}
-              </MuiLink>
-            ))}
-          </Box>
-        )}
+        {challenge.pdfs.map((pdf, idx) => (
+          <Button
+            key={idx}
+            href={pdf}
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+            variant="contained"
+            startIcon={<PictureAsPdfIcon />}
+            size="small"
+            sx={{
+              width: "120px",
+              justifyContent: "flex-start",
+              mb: 1,
+              backgroundColor: "#000",
+              color: "#fff",
+              fontWeight: 500,
+              borderRadius: "4px",
+              textTransform: "none",
+              fontSize: "1rem",
+              px: 2,
+              "&:hover": {
+                backgroundColor: "#333",
+                color: "#fff",
+              },
+            }}
+          >
+            PDF {idx + 1}
+          </Button>
+        ))}
       </Paper>
     </Container>
-  );
-};
+  )
+}
 
-export default ChallengeDetails;
+export default ChallengeDetails
