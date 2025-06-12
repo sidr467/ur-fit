@@ -83,15 +83,18 @@ const Challenges = () => {
       <Navbar user={user} onLogout={handleLogout} />
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography
-          variant="h5"
+          variant="h4"
           gutterBottom
           sx={{
             fontWeight: 700,
             color: "text.primary",
-            mb: 3,
+            mb: 0.5,
           }}
         >
-          Welcome to UR Fit, {user.name}!
+          Wellness Challenges
+        </Typography>
+        <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 3 }}>
+          Welcome to UR Fit, {user?.name || "User"}!
         </Typography>
 
         <Paper
@@ -109,16 +112,32 @@ const Challenges = () => {
             sx={{
               "& .MuiTabs-indicator": {
                 height: 3,
-                backgroundColor: "#000",
-              },
-              "& .MuiTab-root": {
-                color: "#000", // Default font color for tabs
-                fontWeight: 400,
+                backgroundColor: "black", // Black indicator
               },
             }}
           >
-            <Tab label="All Challenges" sx={{ py: 2.5, fontWeight: 500 }} />
-            <Tab label="My Challenges" sx={{ py: 2.5, fontWeight: 500 }} />
+            <Tab
+              label="All Challenges"
+              sx={{
+                py: 2.5,
+                fontWeight: 500,
+                color: tab === 0 ? "black" : "text.secondary",
+                "&.Mui-selected": {
+                  color: "black", // Black when selected
+                },
+              }}
+            />
+            <Tab
+              label="My Challenges"
+              sx={{
+                py: 2.5,
+                fontWeight: 500,
+                color: tab === 1 ? "black" : "text.secondary",
+                "&.Mui-selected": {
+                  color: "black", // Black when selected
+                },
+              }}
+            />
           </Tabs>
         </Paper>
 
