@@ -17,7 +17,6 @@ const App = () => {
         <Route path="/challenges" element={<Challenges />} />
         <Route path="/coordinator-challenges" element={<CoordinatorChallenges />} />
         <Route path="/challenges/:id" element={<ChallengeDetails />} />
-        {/* Add more routes as needed */}
       </Routes>
     </Router>
   );
