@@ -1,10 +1,10 @@
 import React, { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Box, TextField, Button, Typography } from "@mui/material"
+import { Box, TextField, Button, Typography, Paper } from "@mui/material"
 import sideImage from "../../assets/Skipping.png"
 import { login as loginService } from "../../services/api"
 import Navbar from "../Navbar"
-import {jwtDecode} from "jwt-decode"
+import { jwtDecode } from "jwt-decode"
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -29,7 +29,7 @@ const LoginPage = () => {
         return
       }
       localStorage.setItem("token", res.data.token)
-      const user = jwtDecode(res.data.token);
+      const user = jwtDecode(res.data.token)
       if (user.role === "coordinator") {
         navigate("/coordinator-challenges")
       } else {
@@ -50,7 +50,7 @@ const LoginPage = () => {
       }}
     >
       {/* Top Navigation Bar */}
-      <Navbar></Navbar>
+      <Navbar />
 
       {/* Main Content - Two Equal Columns */}
       <Box
@@ -64,12 +64,24 @@ const LoginPage = () => {
         <Box
           sx={{
             flex: 1,
-            display: { xs: "none", md: "block" },
-            backgroundImage: `url(${sideImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            display: { xs: "none", md: "flex" },
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#f5f5f5",
           }}
-        />
+        >
+          <Box
+            component="img"
+            src={sideImage}
+            alt="Wellness"
+            sx={{
+              maxWidth: "70%",
+              maxHeight: "70%",
+              objectFit: "contain",
+              borderRadius: 2,
+            }}
+          />
+        </Box>
 
         {/* Right Side - Login Form */}
         <Box
@@ -78,23 +90,30 @@ const LoginPage = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255,255,255,0.9)",
+            backgroundColor: "f5f5f5",
             overflowY: "auto",
             padding: "20px",
           }}
         >
-          <Box
+          <Paper
+            elevation={3}
             sx={{
               width: "100%",
               maxWidth: "400px",
-              padding: "40px",
+              p: 4,
+              borderRadius: 3,
+              boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+              backgroundColor: "#fff",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
           >
             <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
               Sign in
             </Typography>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{ width: "100%" }}>
               <TextField
                 fullWidth
                 label="Email"
@@ -132,7 +151,10 @@ const LoginPage = () => {
                   py: 1.5,
                   mb: 2,
                   backgroundColor: "black",
-                  "&:hover": { backgroundColor: "#333" },
+                  color: "#fff",
+                  fontWeight: 500,
+                  borderRadius: "4px",
+                  "&:hover": { backgroundColor: "#333", color: "#fff" },
                 }}
               >
                 Sign in
@@ -145,7 +167,7 @@ const LoginPage = () => {
                 Sign up
               </Link>
             </Typography>
-          </Box>
+          </Paper>
         </Box>
       </Box>
     </Box>

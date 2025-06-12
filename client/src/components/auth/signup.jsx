@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { 
+import React, { useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import {
   Box,
   TextField,
   Button,
@@ -9,89 +9,123 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  FormLabel
-} from '@mui/material';
-import sideImage from '../../assets/Skipping.png';
-import { signup as signupService } from '../../services/api';
-import Navbar from '../Navbar'; // Assuming you have a Navbar component
+  FormLabel,
+  Paper
+} from "@mui/material"
+import sideImage from "../../assets/Skipping.png"
+import { signup as signupService } from "../../services/api"
+import Navbar from "../Navbar" // Assuming you have a Navbar component
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    role: 'participant' // Default selection
-  });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const navigate = useNavigate();
+    name: "",
+    email: "",
+    password: "",
+    role: "participant", // Default selection
+  })
+  const [error, setError] = useState("")
+  const [success, setSuccess] = useState("")
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  setSuccess('');
-  try {
-    const res = await signupService(formData);
-    if (res.data && res.data.message && res.data.message.toLowerCase().includes('error')) {
-      setError(res.data.message || 'Signup failed');
-      return;
-    }
-    setSuccess('Signup successful! Redirecting to login...');
-    setTimeout(() => navigate('/login'), 1500);
-  } catch (err) {
-    setError(err.response?.data?.message || 'Server error');
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
   }
-};
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError("")
+    setSuccess("")
+    try {
+      const res = await signupService(formData)
+      if (
+        res.data &&
+        res.data.message &&
+        res.data.message.toLowerCase().includes("error")
+      ) {
+        setError(res.data.message || "Signup failed")
+        return
+      }
+      setSuccess("Signup successful! Redirecting to login...")
+      setTimeout(() => navigate("/login"), 1500)
+    } catch (err) {
+      setError(err.response?.data?.message || "Server error")
+    }
+  }
 
   return (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      height: '100vh',
-      backgroundColor: '#f5f5f5'
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh",
+        backgroundColor: "#f5f5f5",
+      }}
+    >
       {/* Top Navigation Bar */}
       <Navbar></Navbar>
 
       {/* Main Content - Two Equal Columns */}
-      <Box sx={{
-        display: 'flex',
-        flex: 1,
-        overflow: 'hidden'
-      }}>
-        {/* Left Side - Background Image */}
-        <Box sx={{ 
+      <Box
+        sx={{
+          display: "flex",
           flex: 1,
-          display: { xs: 'none', md: 'block' },
-          backgroundImage: `url(${sideImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }} />
+          overflow: "hidden",
+        }}
+      >
+        {/* Left Side - Background Image */}
+        <Box
+          sx={{
+            flex: 1,
+            display: { xs: "none", md: "flex" },
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <Box
+            component="img"
+            src={sideImage}
+            alt="Wellness"
+            sx={{
+              maxWidth: "70%",
+              maxHeight: "70%",
+              objectFit: "contain",
+              borderRadius: 2,
+            }}
+          />
+        </Box>
 
         {/* Right Side - Sign Up Form */}
-        <Box sx={{ 
-          flex: 1,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(255,255,255,0.9)',
-          overflowY: 'auto',
-          padding: '20px'
-        }}>
-          <Box sx={{ 
-            width: '100%',
-            maxWidth: '400px',
-            padding: '40px'
-          }}>
-            <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold' }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#f5f5f5",
+            overflowY: "auto",
+            padding: "20px",
+          }}
+        >
+          <Paper
+            elevation={3}
+            sx={{
+              width: "100%",
+              maxWidth: "400px",
+              p: 4,
+              borderRadius: 3,
+              boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+              backgroundColor: "#fff",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h4" sx={{ mb: 4, fontWeight: "bold" }}>
               Create Account
             </Typography>
-            
+
             <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
@@ -104,7 +138,7 @@ const handleSubmit = async (e) => {
                 sx={{ mb: 3 }}
                 required
               />
-              
+
               <TextField
                 fullWidth
                 label="Email"
@@ -117,7 +151,7 @@ const handleSubmit = async (e) => {
                 sx={{ mb: 3 }}
                 required
               />
-              
+
               <TextField
                 fullWidth
                 label="Password"
@@ -132,23 +166,23 @@ const handleSubmit = async (e) => {
               />
 
               {/* User Type Selection */}
-              <FormControl component="fieldset" sx={{ mb: 3, width: '100%' }}>
-                <FormLabel component="legend">I am a:</FormLabel>
+              <FormControl component="fieldset" sx={{ mb: 3, width: "100%" }}>
+                <FormLabel component="legend">Role</FormLabel>
                 <RadioGroup
                   row
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
                 >
-                  <FormControlLabel 
-                    value="participant" 
-                    control={<Radio />} 
-                    label="Participant" 
+                  <FormControlLabel
+                    value="participant"
+                    control={<Radio />}
+                    label="Participant"
                   />
-                  <FormControlLabel 
-                    value="coordinator" 
-                    control={<Radio />} 
-                    label="Coordinator" 
+                  <FormControlLabel
+                    value="coordinator"
+                    control={<Radio />}
+                    label="Coordinator"
                   />
                 </RadioGroup>
               </FormControl>
@@ -163,7 +197,7 @@ const handleSubmit = async (e) => {
                   {success}
                 </Typography>
               )}
-              
+
               <Button
                 fullWidth
                 type="submit"
@@ -171,25 +205,25 @@ const handleSubmit = async (e) => {
                 sx={{
                   py: 1.5,
                   mb: 2,
-                  backgroundColor: 'black',
-                  '&:hover': { backgroundColor: '#333' }
+                  backgroundColor: "black",
+                  "&:hover": { backgroundColor: "#333" },
                 }}
               >
                 Sign Up
               </Button>
             </form>
-            
+
             <Typography align="center">
-              Already have an account?{' '}
-              <Link to="/login" style={{ color: 'black', fontWeight: 'bold' }}>
+              Already have an account?{" "}
+              <Link to="/login" style={{ color: "black", fontWeight: "bold" }}>
                 Sign in
               </Link>
             </Typography>
+            </Paper>
           </Box>
-        </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default SignUpPage;
+export default SignUpPage

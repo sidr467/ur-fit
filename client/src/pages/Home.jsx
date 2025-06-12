@@ -26,9 +26,18 @@ const Home = () => {
           component={Link}
           to="/login"
           variant="contained"
-          color="primary"
           size="large"
-          style={{ marginRight: '16px' }}
+          sx={{
+            backgroundColor: '#000',
+            color: '#fff',
+            fontWeight: 500,
+            borderRadius: '4px',
+            marginRight: 2,
+            '&:hover': {
+              backgroundColor: '#333',
+              color: '#fff'
+            }
+          }}
         >
           Login
         </Button>
@@ -36,9 +45,18 @@ const Home = () => {
         <Button
           component={Link}
           to="/signup"
-          variant="outlined"
-          color="primary"
+          variant="contained"
           size="large"
+          sx={{
+            backgroundColor: '#000',
+            color: '#fff',
+            fontWeight: 500,
+            borderRadius: '4px',
+            '&:hover': {
+              backgroundColor: '#333',
+              color: '#fff'
+            }
+          }}
         >
           Sign Up
         </Button>

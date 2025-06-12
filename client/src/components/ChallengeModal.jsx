@@ -125,12 +125,16 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           required
         />
-        <Box sx={{ my: 2 }}>
-          <Typography variant="body2" sx={{ mb: 1 }}>
-            Upload Image
-          </Typography>
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-        </Box>
+        <TextField
+          margin="normal"
+          label="Upload Image"
+          name="image"
+          type="file"
+          fullWidth
+          InputLabelProps={{ shrink: true }}
+          inputProps={{ accept: "image/*" }}
+          onChange={handleFileChange}
+        />
         <TextField
           margin="normal"
           label="External Links (comma separated)"
