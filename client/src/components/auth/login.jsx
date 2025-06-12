@@ -49,10 +49,8 @@ const LoginPage = () => {
         backgroundColor: "#f5f5f5",
       }}
     >
-      {/* Top Navigation Bar */}
       <Navbar />
 
-      {/* Main Content - Two Equal Columns */}
       <Box
         sx={{
           display: "flex",
@@ -60,7 +58,6 @@ const LoginPage = () => {
           overflow: "hidden",
         }}
       >
-        {/* Left Side - Background Image */}
         <Box
           sx={{
             flex: 1,
@@ -83,7 +80,6 @@ const LoginPage = () => {
           />
         </Box>
 
-        {/* Right Side - Login Form */}
         <Box
           sx={{
             flex: 1,

@@ -55,7 +55,7 @@ exports.getChallengeById = async (req, res) => {
 
 exports.joinChallenge = async (req, res) => {
     const challengeId = req.params.id;
-    const userId = req.user.userId; // Assumes you have authentication middleware that sets req.user
+    const userId = req.user.userId; 
 
     try {
         const challenge = await Challenge.findById(challengeId);
@@ -63,7 +63,6 @@ exports.joinChallenge = async (req, res) => {
             return res.status(404).json({ message: 'Challenge not found' });
         }
 
-        // Prevent duplicate joins
         if (challenge.participants.includes(userId)) {
             return res.status(400).json({ message: 'Already joined this challenge' });
         }
@@ -84,7 +83,7 @@ exports.joinChallenge = async (req, res) => {
 };
 
 exports.getUserJoinedChallenges = async (req, res) => {
-    const userId = req.user.userId; // Assumes you have authentication middleware that sets req.user
+    const userId = req.user.userId; 
 
     try {
         const user = await User.findById(userId).populate('joinedChallenges');

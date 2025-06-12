@@ -11,7 +11,7 @@ const Navbar = ({ user, onLogout }) => {
       color="transparent"
       elevation={0}
       sx={{
-        borderBottom: "1px solid #000", // Add black bottom border
+        borderBottom: "1px solid #000",
         boxShadow: "none",
       }}
     >

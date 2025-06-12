@@ -112,7 +112,7 @@ const Challenges = () => {
             sx={{
               "& .MuiTabs-indicator": {
                 height: 3,
-                backgroundColor: "black", // Black indicator
+                backgroundColor: "black",
               },
             }}
           >
@@ -123,7 +123,7 @@ const Challenges = () => {
                 fontWeight: 500,
                 color: tab === 0 ? "black" : "text.secondary",
                 "&.Mui-selected": {
-                  color: "black", // Black when selected
+                  color: "black",
                 },
               }}
             />
@@ -134,7 +134,7 @@ const Challenges = () => {
                 fontWeight: 500,
                 color: tab === 1 ? "black" : "text.secondary",
                 "&.Mui-selected": {
-                  color: "black", // Black when selected
+                  color: "black", 
                 },
               }}
             />

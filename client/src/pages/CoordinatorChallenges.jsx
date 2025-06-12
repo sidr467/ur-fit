@@ -138,7 +138,6 @@ const CoordinatorChallenges = () => {
           </Grid>
         )}
 
-        {/* Create Challenge Modal */}
         <ChallengeModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}

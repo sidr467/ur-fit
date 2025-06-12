@@ -14,14 +14,14 @@ import {
 } from "@mui/material"
 import sideImage from "../../assets/Skipping.png"
 import { signup as signupService } from "../../services/api"
-import Navbar from "../Navbar" // Assuming you have a Navbar component
+import Navbar from "../Navbar"
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "participant", // Default selection
+    role: "participant",
   })
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
@@ -62,10 +62,8 @@ const SignUpPage = () => {
         backgroundColor: "#f5f5f5",
       }}
     >
-      {/* Top Navigation Bar */}
       <Navbar></Navbar>
 
-      {/* Main Content - Two Equal Columns */}
       <Box
         sx={{
           display: "flex",
@@ -73,7 +71,6 @@ const SignUpPage = () => {
           overflow: "hidden",
         }}
       >
-        {/* Left Side - Background Image */}
         <Box
           sx={{
             flex: 1,
@@ -96,7 +93,6 @@ const SignUpPage = () => {
           />
         </Box>
 
-        {/* Right Side - Sign Up Form */}
         <Box
           sx={{
             flex: 1,
@@ -165,7 +161,6 @@ const SignUpPage = () => {
                 required
               />
 
-              {/* User Type Selection */}
               <FormControl component="fieldset" sx={{ mb: 3, width: "100%" }}>
                 <FormLabel component="legend">Role</FormLabel>
                 <RadioGroup
