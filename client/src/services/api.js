@@ -27,4 +27,12 @@ export const createChallenge = (challengeData, token) =>
     headers: { Authorization: `Bearer ${token}` },
   })
 
+  export const getChallengeById = async (id, token) => {
+  const res = await API.get(`/challenges/${id}`, {
+    headers: {
+      ...(token && { Authorization: `Bearer ${token}` }),
+    },
+  });
+  return res.data;
+};
 export default API

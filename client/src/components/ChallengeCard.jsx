@@ -7,6 +7,7 @@ import {
   CardActions,
   Box
 } from '@mui/material';
+import {Link} from 'react-router-dom';
 
 const ChallengeCard = ({
   challenge,
@@ -62,13 +63,16 @@ const ChallengeCard = ({
         <Typography
           gutterBottom
           variant="h6"
-          component="h3"
+          component={Link}
+          to={`/challenges/${challenge._id}`}
           sx={{
             fontWeight: 600,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            textDecoration: 'none',
+            color: "#000"
           }}
         >
           {challenge.title}

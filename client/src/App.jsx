@@ -5,6 +5,7 @@ import Login from './components/auth/login';
 import Home from './pages/Home';
 import Challenges from './pages/Challenges';
 import CoordinatorChallenges from './pages/CoordinatorChallenges';
+import ChallengeDetails from './pages/ChallengeDetails';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/challenges" element={<Challenges />} />
         <Route path="/coordinator-challenges" element={<CoordinatorChallenges />} />
+        <Route path="/challenges/:id" element={<ChallengeDetails />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
