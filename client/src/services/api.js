@@ -36,3 +36,4 @@ export const createChallenge = (challengeData, token) =>
   return res.data;
 };
 export default API
+
