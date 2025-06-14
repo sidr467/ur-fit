@@ -6,7 +6,8 @@ const {
     getChallenges,
     getChallengeById,
     joinChallenge,
-    getUserJoinedChallenges
+    getUserJoinedChallenges,
+    userEnrollment
 } = require('../controllers/challengeController');
 
 // Create a new challenge
@@ -19,6 +20,7 @@ router.get('/', getChallenges);
 router.get('/:id', getChallengeById);
 
 router.post('/:id/join', auth, joinChallenge); 
-router.get('/joined/me', auth, getUserJoinedChallenges);                                                                                                 
+router.get('/joined/me', auth, getUserJoinedChallenges);
+router.post('/enroll', auth,userEnrollment);                                                                                                 
 
 module.exports = router;
