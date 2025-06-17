@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Challenges from './pages/Challenges';
 import CoordinatorChallenges from './pages/CoordinatorChallenges';
 import ChallengeDetails from './pages/ChallengeDetails';
+import EnrollUser from './pages/EnrollUser';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/challenges" element={<Challenges />} />
         <Route path="/coordinator-challenges" element={<CoordinatorChallenges />} />
         <Route path="/challenges/:id" element={<ChallengeDetails />} />
+        <Route path='/enrollment' element={<EnrollUser/>}/>
       </Routes>
     </Router>
   );

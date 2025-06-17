@@ -35,5 +35,14 @@ export const createChallenge = (challengeData, token) =>
   });
   return res.data;
 };
+
+export const userEnrollment = (data, token) =>
+  API.post("/challenges/enroll", data, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+export const getAllUsers = (token) =>
+  API.get("/users", { headers: { Authorization: `Bearer ${token}` } })
+
 export default API
 

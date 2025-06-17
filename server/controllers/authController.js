@@ -1,55 +1,62 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
+const User = require("../models/User")
 
 exports.signup = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role } = req.body
 
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email })
     if (existingUser)
-      return res.status(400).json({ message: 'Email already exists' });
+      return res.status(400).json({ message: "Email already exists" })
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, role });
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const user = new User({ name, email, password: hashedPassword, role })
 
-    await user.save();
-    res.status(201).json({ message: 'Signup successful' });
+    await user.save()
+    res.status(201).json({ message: "Signup successful" })
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" })
   }
-};
+}
 
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
   try {
-    const user = await User.findOne({ email });
-    if (!user)
-      return res.status(400).json({ message: 'Invalid credentials' });
+    const user = await User.findOne({ email })
+    if (!user) return res.status(400).json({ message: "Invalid credentials" })
 
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch)
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: "Invalid credentials" })
 
     const token = jwt.sign(
-      { userId: user._id,name: user.name,
-    email: user.email, role: user.role },
+      { userId: user._id, name: user.name, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '2h' }
-    );
+      { expiresIn: "2h" }
+    )
 
     res.status(200).json({
-      message: 'Login successful',
+      message: "Login successful",
       token,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
-      }
-    });
+        role: user.role,
+      },
+    })
   } catch (err) {
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" })
   }
-};
+}
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: "participant" }, "-password")
+    res.json(users)
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message })
+  }
+}
