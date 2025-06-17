@@ -28,7 +28,7 @@ const ChallengeDetails = () => {
     }
     try {
       const decoded = jwtDecode(token)
-      if (decoded.role !== "participant") {
+      if (decoded.role !== "coordinator") {
         navigate("/login")
       }
     } catch {

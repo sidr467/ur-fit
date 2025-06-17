@@ -1,78 +1,98 @@
-import React from 'react';
+import React from "react"
 import {
   Card,
   CardContent,
   Typography,
   Button,
   CardActions,
-  Box
-} from '@mui/material';
-import {Link} from 'react-router-dom';
+  Box,
+} from "@mui/material"
+import { Link } from "react-router-dom"
+import { jwtDecode } from "jwt-decode"
 
 const ChallengeCard = ({
   challenge,
   isJoined,
   onJoin,
-  isCoordinator = false
+  isCoordinator = false,
 }) => {
-  const cardImage = challenge.imageUrl;
+  const cardImage = challenge.imageUrl
+
+  const token = localStorage.getItem("token")
+  let role = ""
+  if (token) {
+    try {
+      const decoded = jwtDecode(token)
+      role = decoded.role
+    } catch {}
+  }
 
   return (
-    <Card sx={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      border: '1px solid #e0e0e0',
-      borderRadius: '8px',
-      overflow: 'hidden',
-      transition: 'all 0.3s ease',
-      '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
-        borderColor: '#333'
-      }
-    }}>
-      <Box sx={{
-        height: 180,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        overflow: 'hidden',
-        backgroundColor: '#f5f5f5'
-      }}>
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        border: "1px solid #e0e0e0",
+        borderRadius: "8px",
+        overflow: "hidden",
+        transition: "all 0.3s ease",
+        "&:hover": {
+          transform: "translateY(-4px)",
+          boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
+          borderColor: "#333",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          height: 180,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          backgroundColor: "#f5f5f5",
+        }}
+      >
         {cardImage && (
           <img
             src={cardImage}
             alt={challenge.title}
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              padding: '16px'
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              padding: "16px",
             }}
           />
         )}
       </Box>
-      <CardContent sx={{
-        flex: '1 0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        p: 2.5,
-        pb: 0
-      }}>
+      <CardContent
+        sx={{
+          flex: "1 0 auto",
+          display: "flex",
+          flexDirection: "column",
+          p: 2.5,
+          pb: 0,
+        }}
+      >
         <Typography
           gutterBottom
           variant="h6"
           component={Link}
-          to={`/challenges/${challenge._id}`}
+          to={
+            role === "coordinator"
+              ? `/coordinator/challenges/${challenge._id}`
+              : `/challenges/${challenge._id}`
+          }
           sx={{
             fontWeight: 600,
-            display: '-webkit-box',
+            display: "-webkit-box",
             WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            textDecoration: 'none',
-            color: "#000"
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textDecoration: "none",
+            color: "#000",
           }}
         >
           {challenge.title}
@@ -81,22 +101,24 @@ const ChallengeCard = ({
           variant="body2"
           color="text.secondary"
           sx={{
-            display: '-webkit-box',
+            display: "-webkit-box",
             WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-            flex: '1 0 auto'
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            flex: "1 0 auto",
           }}
         >
           {challenge.description}
         </Typography>
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          mt: 'auto',
-          pt: 1.5,
-          borderTop: '1px solid rgba(0,0,0,0.05)'
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            mt: "auto",
+            pt: 1.5,
+            borderTop: "1px solid rgba(0,0,0,0.05)",
+          }}
+        >
           <Typography variant="caption" sx={{ fontWeight: 500 }}>
             {challenge.totalDays} days
           </Typography>
@@ -105,29 +127,31 @@ const ChallengeCard = ({
           </Typography>
         </Box>
       </CardContent>
-      <CardActions sx={{
-        p: 2,
-        pt: 1,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      <CardActions
+        sx={{
+          p: 2,
+          pt: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         {isCoordinator ? (
           <Button
             fullWidth
             variant="contained"
             size="medium"
             component={Link}
-            to={`/challenges/${challenge._id}`}
+            to={`/coordinator/challenges/${challenge._id}`}
             sx={{
               height: 42,
               fontWeight: 500,
-              borderRadius: '4px',
-              backgroundColor: '#000',
-              color: '#fff',
-              '&:hover': {
-                backgroundColor: '#333'
-              }
+              borderRadius: "4px",
+              backgroundColor: "#000",
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "#333",
+              },
             }}
           >
             Edit Challenge
@@ -142,26 +166,26 @@ const ChallengeCard = ({
             sx={{
               height: 42,
               fontWeight: 500,
-              borderRadius: '4px',
-              backgroundColor: isJoined ? 'transparent' : '#000',
-              color: isJoined ? '#000' : '#fff',
-              borderColor: '#000',
-              '&:hover': {
-                backgroundColor: isJoined ? 'transparent' : '#333',
-                borderColor: '#333'
+              borderRadius: "4px",
+              backgroundColor: isJoined ? "transparent" : "#000",
+              color: isJoined ? "#000" : "#fff",
+              borderColor: "#000",
+              "&:hover": {
+                backgroundColor: isJoined ? "transparent" : "#333",
+                borderColor: "#333",
               },
-              '&.Mui-disabled': {
-                borderColor: 'rgba(0,0,0,0.12)',
-                color: 'rgba(0,0,0,0.26)'
-              }
+              "&.Mui-disabled": {
+                borderColor: "rgba(0,0,0,0.12)",
+                color: "rgba(0,0,0,0.26)",
+              },
             }}
           >
-            {isJoined ? 'Already Joined' : 'Join Challenge'}
+            {isJoined ? "Already Joined" : "Join Challenge"}
           </Button>
         )}
       </CardActions>
     </Card>
-  );
-};
+  )
+}
 
-export default ChallengeCard;
+export default ChallengeCard
