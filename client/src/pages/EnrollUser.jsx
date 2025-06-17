@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import {jwtDecode} from "jwt-decode"
+import { jwtDecode } from "jwt-decode"
 import { useNavigate } from "react-router-dom"
 import {
   getAllUsers,
@@ -70,10 +70,10 @@ const EnrollUser = () => {
         alert(res.data.message || "Enrolled!")
         return getChallengeById(selectedChallenge, token)
       })
-      .then((res) => {
-        const ids = Array.isArray(res.data.participants)
-          ? res.data.participants.map((u) =>
-              typeof u === "string" ? u : u._id
+      .then((challenge) => {
+        const ids = Array.isArray(challenge.participants)
+          ? challenge.participants.map((u) =>
+              typeof u === "string" ? u : String(u._id)
             )
           : []
         setEnrolledUserIds(ids)
