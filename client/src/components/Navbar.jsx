@@ -29,6 +29,14 @@ const Navbar = ({ user, onLogout }) => {
           >
             <Typography>Challenges</Typography>
           </Link>
+           {user && user.role === "coordinator" && (
+            <Link
+              to="/enrollment"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <Typography>Enrollment</Typography>
+            </Link>
+          )}
           {user ? (
             <Button
               onClick={onLogout}

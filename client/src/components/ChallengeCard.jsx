@@ -1,14 +1,6 @@
 import React from "react"
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  CardActions,
-  Box,
-} from "@mui/material"
 import { Link } from "react-router-dom"
-import { jwtDecode } from "jwt-decode"
+import { Button, Card, CardContent, Typography } from "@mui/material"
 
 const ChallengeCard = ({
   challenge,
@@ -16,143 +8,92 @@ const ChallengeCard = ({
   onJoin,
   isCoordinator = false,
 }) => {
-  const cardImage = challenge.imageUrl
-
-  const token = localStorage.getItem("token")
-  let role = ""
-  if (token) {
-    try {
-      const decoded = jwtDecode(token)
-      role = decoded.role
-    } catch {}
-  }
-
   return (
     <Card
-      sx={{
+      style={{
+        border: "1px solid #e0e0e0",
+        borderRadius: "8px",
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        border: "1px solid #e0e0e0",
-        borderRadius: "8px",
-        overflow: "hidden",
-        transition: "all 0.3s ease",
-        "&:hover": {
-          transform: "translateY(-4px)",
-          boxShadow: "0 6px 12px rgba(0,0,0,0.15)",
-          borderColor: "#333",
-        },
       }}
     >
-      <Box
-        sx={{
-          height: 180,
+      {/* Image Section */}
+      <div
+        style={{
+          height: "160px",
+          backgroundColor: "#f5f5f5",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           overflow: "hidden",
-          backgroundColor: "#f5f5f5",
         }}
       >
-        {cardImage && (
+        {challenge.imageUrl && (
           <img
-            src={cardImage}
+            src={challenge.imageUrl}
             alt={challenge.title}
             style={{
-              width: "100%",
-              height: "100%",
+              maxWidth: "100%",
+              maxHeight: "100%",
               objectFit: "contain",
-              padding: "16px",
             }}
           />
         )}
-      </Box>
-      <CardContent
-        sx={{
-          flex: "1 0 auto",
-          display: "flex",
-          flexDirection: "column",
-          p: 2.5,
-          pb: 0,
-        }}
-      >
+      </div>
+
+      {/* Content Section */}
+      <CardContent style={{ flex: 1 }}>
         <Typography
-          gutterBottom
           variant="h6"
-          component={Link}
-          to={
-            role === "coordinator"
-              ? `/coordinator/challenges/${challenge._id}`
-              : `/challenges/${challenge._id}`
-          }
-          sx={{
-            fontWeight: 600,
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            textDecoration: "none",
-            color: "#000",
-          }}
+          component="h3"
+          style={{ marginBottom: "12px", fontWeight: "600" }}
         >
-          {challenge.title}
+          <Link
+            to={`/challenges/${challenge._id}`}
+            style={{
+              color: "#000",
+              textDecoration: "none",
+              "&:hover": { textDecoration: "underline" },
+            }}
+          >
+            {challenge.title}
+          </Link>
         </Typography>
+
         <Typography
           variant="body2"
-          color="text.secondary"
-          sx={{
-            display: "-webkit-box",
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            flex: "1 0 auto",
-          }}
+          color="textSecondary"
+          style={{ marginBottom: "16px" }}
         >
           {challenge.description}
         </Typography>
-        <Box
-          sx={{
+
+        <div
+          style={{
             display: "flex",
             justifyContent: "space-between",
-            mt: "auto",
-            pt: 1.5,
-            borderTop: "1px solid rgba(0,0,0,0.05)",
+            marginTop: "auto",
+            paddingTop: "12px",
+            borderTop: "1px solid #f0f0f0",
           }}
         >
-          <Typography variant="caption" sx={{ fontWeight: 500 }}>
-            {challenge.totalDays} days
-          </Typography>
-          <Typography variant="caption" sx={{ fontWeight: 500 }}>
+          <Typography variant="caption">{challenge.totalDays} days</Typography>
+          <Typography variant="caption">
             {challenge.participantCount} participants
           </Typography>
-        </Box>
+        </div>
       </CardContent>
-      <CardActions
-        sx={{
-          p: 2,
-          pt: 1,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
+
+      {/* Button Section */}
+      <div style={{ padding: "0 16px 16px 16px" }}>
         {isCoordinator ? (
           <Button
             fullWidth
             variant="contained"
-            size="medium"
             component={Link}
             to={`/coordinator/challenges/${challenge._id}`}
-            sx={{
-              height: 42,
-              fontWeight: 500,
-              borderRadius: "4px",
-              backgroundColor: "#000",
-              color: "#fff",
-              "&:hover": {
-                backgroundColor: "#333",
-              },
-            }}
+            style={{ height: "42px", backgroundColor: "#000" }}
           >
             Edit Challenge
           </Button>
@@ -160,30 +101,19 @@ const ChallengeCard = ({
           <Button
             fullWidth
             variant={isJoined ? "outlined" : "contained"}
-            size="medium"
             onClick={() => !isJoined && onJoin(challenge._id)}
             disabled={isJoined}
-            sx={{
-              height: 42,
-              fontWeight: 500,
-              borderRadius: "4px",
+            style={{
+              height: "42px",
               backgroundColor: isJoined ? "transparent" : "#000",
               color: isJoined ? "#000" : "#fff",
               borderColor: "#000",
-              "&:hover": {
-                backgroundColor: isJoined ? "transparent" : "#333",
-                borderColor: "#333",
-              },
-              "&.Mui-disabled": {
-                borderColor: "rgba(0,0,0,0.12)",
-                color: "rgba(0,0,0,0.26)",
-              },
             }}
           >
             {isJoined ? "Already Joined" : "Join Challenge"}
           </Button>
         )}
-      </CardActions>
+      </div>
     </Card>
   )
 }
