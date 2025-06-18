@@ -141,3 +141,89 @@ exports.userEnrollment = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message })
   }
 }
+
+exports.addChallengeLink = async (req, res) => {
+  const { id } = req.params;
+  const { link } = req.body; // link: string
+
+  try {
+    const challenge = await Challenge.findByIdAndUpdate(
+      id,
+      { $push: { externalLink: link } },
+      { new: true }
+    );
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    res.status(200).json({ message: "Link added successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.updateSingleChallengeLink = async (req, res) => {
+  const { id } = req.params;
+  const { index, newLink } = req.body; // index: number, newLink: string
+
+  try {
+    const challenge = await Challenge.findById(id);
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    if (
+      !Array.isArray(challenge.externalLink) ||
+      index < 0 ||
+      index >= challenge.externalLink.length
+    ) {
+      return res.status(400).json({ message: "Invalid link index" });
+    }
+    challenge.externalLink[index] = newLink;
+    await challenge.save();
+    res.status(200).json({ message: "Link updated successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.addChallengePdf = async (req, res) => {
+  const { id } = req.params;
+  const { pdf } = req.body; // pdf: string
+
+  try {
+    const challenge = await Challenge.findByIdAndUpdate(
+      id,
+      { $push: { pdfs: pdf } },
+      { new: true }
+    );
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    res.status(200).json({ message: "PDF added successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.updateSingleChallengePdf = async (req, res) => {
+  const { id } = req.params;
+  const { index, newPdf } = req.body; // index: number, newPdf: string
+
+  try {
+    const challenge = await Challenge.findById(id);
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    if (
+      !Array.isArray(challenge.pdfs) ||
+      index < 0 ||
+      index >= challenge.pdfs.length
+    ) {
+      return res.status(400).json({ message: "Invalid PDF index" });
+    }
+    challenge.pdfs[index] = newPdf;
+    await challenge.save();
+    res.status(200).json({ message: "PDF updated successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
