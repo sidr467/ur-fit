@@ -7,7 +7,13 @@ const ChallengeCard = ({
   isJoined,
   onJoin,
   isCoordinator = false,
+  userRole,
 }) => {
+  const challengeLink =
+    userRole === "coordinator"
+      ? `/coordinator/challenges/${challenge._id}`
+      : `/challenges/${challenge._id}`
+
   return (
     <Card
       style={{
@@ -50,7 +56,7 @@ const ChallengeCard = ({
           style={{ marginBottom: "12px", fontWeight: "600" }}
         >
           <Link
-            to={`/challenges/${challenge._id}`}
+            to={challengeLink}
             style={{
               color: "#000",
               textDecoration: "none",

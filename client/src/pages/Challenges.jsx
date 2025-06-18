@@ -14,13 +14,15 @@ import ExpandedChallengeCard from "../components/ExpandedChallengeCard"
 const Challenges = () => {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
-  const [tab, setTab] = useState(0)
   const [allChallenges, setAllChallenges] = useState([])
   const [joinedChallenges, setJoinedChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [useExpandedView, setUseExpandedView] = useState(false)
   const [search, setSearch] = useState("")
-
+  const [tab, setTab] = useState(() => {
+    const savedTab = localStorage.getItem("challengesTab")
+    return savedTab !== null ? Number(savedTab) : 0
+  })
   // Get user from the token
   let user = null
   try {
@@ -77,6 +79,11 @@ const Challenges = () => {
     fetchJoined()
   }
 
+  const handleTabChange = (_, v) => {
+    setTab(v)
+    localStorage.setItem("challengesTab", v) // Save tab index
+  }
+
   const isJoined = (challengeId) =>
     joinedChallenges.some((c) => c._id === challengeId)
 
@@ -124,52 +131,55 @@ const Challenges = () => {
             }}
           />
 
-          {/* Layout toggle button */}
-          <div
+          <button
+            onClick={() => setUseExpandedView(!useExpandedView)}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "16px",
+              padding: "8px 16px",
+              background: "#f0f0f0",
+              border: "1px solid #ddd",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "14px",
+              height: "40px",
             }}
           >
-            <Tabs
-              value={tab}
-              onChange={(_, v) => setTab(v)}
-              style={{ marginBottom: "24px" }}
-            >
-              <Tab
-                label="All Challenges"
-                style={{
-                  fontWeight: tab === 0 ? "bold" : "normal",
-                  fontSize: "16px",
-                }}
-              />
-              <Tab
-                label="My Challenges"
-                style={{
-                  fontWeight: tab === 1 ? "bold" : "normal",
-                  fontSize: "16px",
-                }}
-              />
-            </Tabs>
-
-            <button
-              onClick={() => setUseExpandedView(!useExpandedView)}
-              style={{
-                padding: "8px 16px",
-                background: "#f0f0f0",
-                border: "1px solid #ddd",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "14px",
-                height: "40px",
-              }}
-            >
-              {useExpandedView ? "Card View" : "Detailed View"}
-            </button>
-          </div>
+            {useExpandedView ? "Card View" : "Detailed View"}
+          </button>
         </div>
+
+        <Tabs
+          value={tab}
+          onChange={handleTabChange}
+          variant="fullWidth"
+          TabIndicatorProps={{ style: { backgroundColor: "#000", height: 1.5 } }}
+          sx={{
+            marginBottom: "24px",
+            minHeight: 0,
+            "& .MuiTab-root": {
+              minHeight: 0,
+              fontSize: "16px",
+              fontWeight: "normal",
+              color: "#666",
+            },
+            "& .Mui-selected": {
+              color: "#000 !important",
+            },
+          }}
+        >
+          <Tab
+            label="All Challenges"
+            style={{
+              fontSize: "16px",
+            }}
+          />
+          <Tab
+            label="My Challenges"
+            style={{
+              fontSize: "16px",
+            }}
+          />
+        </Tabs>
+
         {loading ? (
           <div
             style={{

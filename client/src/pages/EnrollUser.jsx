@@ -135,20 +135,20 @@ const EnrollUser = () => {
           </tr>
         </thead>
         <tbody>
-  {filteredUsers.map((user) => (
-    <tr key={user._id}>
-      <td>{user.name}</td>
-      <td>{user.email}</td>
-      <td>
-        {enrolledUserIds.includes(String(user._id)) ? (
-          <span>Enrolled</span>
-        ) : (
-          <button onClick={() => handleEnroll(user._id)}>Enroll</button>
-        )}
-      </td>
-    </tr>
-  ))}
-</tbody>
+          {filteredUsers.map((user) => (
+            <tr key={user._id}>
+              <td>{user.name}</td>
+              <td>{user.email}</td>
+              <td>
+                {enrolledUserIds.includes(String(user._id)) ? (
+                  <span>Enrolled</span>
+                ) : (
+                  <button onClick={() => handleEnroll(user._id)}>Enroll</button>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
       </table>
     </div>
   )

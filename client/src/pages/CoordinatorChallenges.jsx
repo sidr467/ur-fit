@@ -54,10 +54,11 @@ const CoordinatorChallenges = () => {
   }
 
   const filteredChallenges = challenges.filter(
-  challenge =>
-    challenge.title.toLowerCase().includes(search.toLowerCase()) ||
-    (challenge.description && challenge.description.toLowerCase().includes(search.toLowerCase()))
-);
+    (challenge) =>
+      challenge.title.toLowerCase().includes(search.toLowerCase()) ||
+      (challenge.description &&
+        challenge.description.toLowerCase().includes(search.toLowerCase()))
+  )
 
   const handleCreateChallenge = async (challengeData) => {
     try {
@@ -75,6 +76,12 @@ const CoordinatorChallenges = () => {
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
       <Navbar user={user} onLogout={handleLogout} />
       <Container maxWidth="lg" style={{ padding: "32px 0" }}>
+        <Typography
+          variant="h4"
+          style={{ fontWeight: "bold", marginBottom: "16px" }}
+        >
+          Coordinator Dashboard
+        </Typography>
         <div
           style={{
             display: "flex",
@@ -83,39 +90,27 @@ const CoordinatorChallenges = () => {
             marginBottom: "32px",
           }}
         >
-          <div
+          <input
+            type="text"
+            placeholder="Search challenges..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "24px",
+              padding: "8px",
+              fontSize: "16px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              width: "300px",
+              marginRight: "16px",
             }}
+          />
+          <Button
+            variant="contained"
+            onClick={() => setModalOpen(true)}
+            style={{ backgroundColor: "#000" }}
           >
-            <Typography variant="h4" style={{ fontWeight: "bold" }}>
-              Coordinator Dashboard
-            </Typography>
-            <input
-              type="text"
-              placeholder="Search challenges..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                padding: "8px",
-                fontSize: "16px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                width: "300px",
-                marginRight: "16px",
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={() => setModalOpen(true)}
-              style={{ backgroundColor: "#000" }}
-            >
-              Create New Challenge
-            </Button>
-          </div>
+            Create New Challenge
+          </Button>
         </div>
 
         {loading ? (
@@ -149,6 +144,7 @@ const CoordinatorChallenges = () => {
                 isCoordinator={true}
                 onJoin={() => {}}
                 isJoined={false}
+                userRole={user.role}
               />
             ))}
           </div>
