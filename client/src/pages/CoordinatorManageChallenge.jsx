@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { jwtDecode } from "jwt-decode"
-import {
-  Box,
-  Typography,
-  Container,
-  Paper,
-  Button,
-  Link as MuiLink,
-  Chip,
-  Divider,
-} from "@mui/material"
+import { Box, Typography, Container, Paper, Chip, Divider } from "@mui/material"
 import {
   getChallengeById,
   updateSingleChallengeLink,
   updateSingleChallengePdf,
+  addChallengeLink,
+  addChallengePdf,
+  deleteSingleChallengeLink,
+  deleteSingleChallengePdf,
 } from "../services/api"
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf"
+import EditableList from "../components/EditableList"
 
 const ChallengeDetails = () => {
   const { id } = useParams()
@@ -55,34 +50,6 @@ const ChallengeDetails = () => {
   }, [id])
 
   console.log("Challenge Details:", id)
-
-  const handleUpdateLink = async (index, oldLink) => {
-    const newLink = prompt("Enter new link:", oldLink)
-    if (newLink && newLink !== oldLink) {
-      try {
-        await updateSingleChallengeLink(id, index, newLink, token)
-        // Refetch challenge data
-        const updated = await getChallengeById(id)
-        setChallenge(updated)
-      } catch {
-        alert("Failed to update link.")
-      }
-    }
-  }
-
-  const handleUpdatePdf = async (index, oldPdf) => {
-    const newPdf = prompt("Enter new PDF link:", oldPdf)
-    if (newPdf && newPdf !== oldPdf) {
-      try {
-        await updateSingleChallengePdf(id, index, newPdf, token)
-        // Refetch challenge data
-        const updated = await getChallengeById(id)
-        setChallenge(updated)
-      } catch {
-        alert("Failed to update PDF.")
-      }
-    }
-  }
 
   if (loading) {
     return (
@@ -139,74 +106,47 @@ const ChallengeDetails = () => {
         <Divider sx={{ my: 3 }} />
 
         {/* External Links */}
-        {challenge.externalLink && challenge.externalLink.length > 0 && (
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Resources / External Links
-            </Typography>
-            {challenge.externalLink.map((link, idx) => (
-              <Box key={idx} display="flex" alignItems="center" mb={1}>
-                <MuiLink
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{ display: "block", mb: 1, mr: 1 }}
-                >
-                  {link}
-                </MuiLink>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={() => handleUpdateLink(idx, link)}
-                  sx={{ ml: 1 }}
-                >
-                  Update
-                </Button>
-              </Box>
-            ))}
-          </Box>
-        )}
+        <EditableList
+          items={challenge.externalLink || []}
+          onUpdate={async (idx, value) => {
+            await updateSingleChallengeLink(id, idx, value, token)
+            const updated = await getChallengeById(id)
+            setChallenge(updated)
+          }}
+          onAdd={async (value) => {
+            await addChallengeLink(id, value, token)
+            const updated = await getChallengeById(id)
+            setChallenge(updated)
+          }}
+          onDelete={async (idx) => {
+            await deleteSingleChallengeLink(id, idx, token)
+            const updated = await getChallengeById(id)
+            setChallenge(updated)
+          }}
+          label="External Links"
+          type="link"
+        />
 
-        {/* PDFs */}
-        {challenge.pdfs.map((pdf, idx) => (
-          <Box key={idx} display="flex" alignItems="center" mb={1}>
-            <Button
-              href={pdf}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-              variant="contained"
-              startIcon={<PictureAsPdfIcon />}
-              size="small"
-              sx={{
-                width: "120px",
-                justifyContent: "flex-start",
-                mb: 1,
-                backgroundColor: "#000",
-                color: "#fff",
-                fontWeight: 500,
-                borderRadius: "4px",
-                textTransform: "none",
-                fontSize: "1rem",
-                px: 2,
-                "&:hover": {
-                  backgroundColor: "#333",
-                  color: "#fff",
-                },
-              }}
-            >
-              PDF {idx + 1}
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              onClick={() => handleUpdatePdf(idx, pdf)}
-              sx={{ ml: 1 }}
-            >
-              Update
-            </Button>
-          </Box>
-        ))}
+        <EditableList
+          items={challenge.pdfs || []}
+          onUpdate={async (idx, value) => {
+            await updateSingleChallengePdf(id, idx, value, token)
+            const updated = await getChallengeById(id)
+            setChallenge(updated)
+          }}
+          onAdd={async (value) => {
+            await addChallengePdf(id, value, token)
+            const updated = await getChallengeById(id)
+            setChallenge(updated)
+          }}
+          onDelete={async (idx) => {
+            await deleteSingleChallengePdf(id, idx, token)
+            const updated = await getChallengeById(id)
+            setChallenge(updated)
+          }}
+          label="PDF Resources"
+          type="pdf"
+        />
       </Paper>
     </Container>
   )

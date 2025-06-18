@@ -27,32 +27,69 @@ export const createChallenge = (challengeData, token) =>
     headers: { Authorization: `Bearer ${token}` },
   })
 
-  export const getChallengeById = async (id, token) => {
+export const getChallengeById = async (id, token) => {
   const res = await API.get(`/challenges/${id}`, {
     headers: {
       ...(token && { Authorization: `Bearer ${token}` }),
     },
-  });
-  return res.data;
-};
+  })
+  return res.data
+}
 
 export const userEnrollment = (data, token) =>
   API.post("/challenges/enroll", data, {
     headers: { Authorization: `Bearer ${token}` },
-  });
+  })
 
 export const getAllUsers = (token) =>
   API.get("/users", { headers: { Authorization: `Bearer ${token}` } })
 
 export const updateSingleChallengeLink = (id, index, newLink, token) =>
-  API.put(`/challenges/${id}/link`, { index, newLink }, {
+  API.put(
+    `/challenges/${id}/links`,
+    { index, newLink },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  )
+
+export const updateSingleChallengePdf = (id, index, newPdf, token) =>
+  API.put(
+    `/challenges/${id}/pdf`,
+    { index, newPdf },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  )
+
+export const addChallengeLink = (id, link, token) =>
+  API.post(
+    `/challenges/${id}/link`,
+    { link },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  )
+
+export const addChallengePdf = (id, pdf, token) =>
+  API.post(
+    `/challenges/${id}/pdf`,
+    { pdf },
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  )
+
+export const deleteSingleChallengeLink = (id, index, token) =>
+  API.delete(`/challenges/${id}/link`, {
+    data: { index },
     headers: { Authorization: `Bearer ${token}` }
   });
 
-export const updateSingleChallengePdf = (id, index, newPdf, token) =>
-  API.put(`/challenges/${id}/pdf`, { index, newPdf }, {
+export const deleteSingleChallengePdf = (id, index, token) =>
+  API.delete(`/challenges/${id}/pdf`, {
+    data: { index },
     headers: { Authorization: `Bearer ${token}` }
   });
 
 export default API
-

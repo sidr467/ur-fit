@@ -144,7 +144,7 @@ exports.userEnrollment = async (req, res) => {
 
 exports.addChallengeLink = async (req, res) => {
   const { id } = req.params;
-  const { link } = req.body; // link: string
+  const { link } = req.body;
 
   try {
     const challenge = await Challenge.findByIdAndUpdate(
@@ -163,7 +163,7 @@ exports.addChallengeLink = async (req, res) => {
 
 exports.updateSingleChallengeLink = async (req, res) => {
   const { id } = req.params;
-  const { index, newLink } = req.body; // index: number, newLink: string
+  const { index, newLink } = req.body; 
 
   try {
     const challenge = await Challenge.findById(id);
@@ -187,7 +187,7 @@ exports.updateSingleChallengeLink = async (req, res) => {
 
 exports.addChallengePdf = async (req, res) => {
   const { id } = req.params;
-  const { pdf } = req.body; // pdf: string
+  const { pdf } = req.body;
 
   try {
     const challenge = await Challenge.findByIdAndUpdate(
@@ -206,7 +206,7 @@ exports.addChallengePdf = async (req, res) => {
 
 exports.updateSingleChallengePdf = async (req, res) => {
   const { id } = req.params;
-  const { index, newPdf } = req.body; // index: number, newPdf: string
+  const { index, newPdf } = req.body; 
 
   try {
     const challenge = await Challenge.findById(id);
@@ -223,6 +223,56 @@ exports.updateSingleChallengePdf = async (req, res) => {
     challenge.pdfs[index] = newPdf;
     await challenge.save();
     res.status(200).json({ message: "PDF updated successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Delete a single link by index
+exports.deleteSingleChallengeLink = async (req, res) => {
+  const { id } = req.params;
+  const { index } = req.body;
+
+  try {
+    const challenge = await Challenge.findById(id);
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    if (
+      !Array.isArray(challenge.externalLink) ||
+      index < 0 ||
+      index >= challenge.externalLink.length
+    ) {
+      return res.status(400).json({ message: "Invalid link index" });
+    }
+    challenge.externalLink.splice(index, 1);
+    await challenge.save();
+    res.status(200).json({ message: "Link deleted successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+// Delete a single PDF by index
+exports.deleteSingleChallengePdf = async (req, res) => {
+  const { id } = req.params;
+  const { index } = req.body; 
+
+  try {
+    const challenge = await Challenge.findById(id);
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    if (
+      !Array.isArray(challenge.pdfs) ||
+      index < 0 ||
+      index >= challenge.pdfs.length
+    ) {
+      return res.status(400).json({ message: "Invalid PDF index" });
+    }
+    challenge.pdfs.splice(index, 1);
+    await challenge.save();
+    res.status(200).json({ message: "PDF deleted successfully", challenge });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

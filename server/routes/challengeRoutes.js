@@ -12,6 +12,8 @@ const {
   updateSingleChallengeLink,
   updateSingleChallengePdf,
   addChallengePdf,
+  deleteSingleChallengeLink,
+  deleteSingleChallengePdf
 } = require("../controllers/challengeController")
 
 // Create a new challenge
@@ -27,10 +29,13 @@ router.post("/:id/join", auth, joinChallenge)
 router.get("/joined/me", auth, getUserJoinedChallenges)
 router.post("/enroll", auth, userEnrollment)
 
-router.post("/:id/link", addChallengeLink)
-router.put("/:id/links", updateSingleChallengeLink)
+router.post("/:id/link", auth, addChallengeLink)
+router.put("/:id/links", auth, updateSingleChallengeLink)
 
-router.put("/:id/pdf", updateSingleChallengePdf)
-router.post("/:id/pdf", addChallengePdf)
+router.put("/:id/pdf", auth, updateSingleChallengePdf)
+router.post("/:id/pdf", auth, addChallengePdf)
+
+router.delete('/:id/link', auth, deleteSingleChallengeLink);
+router.delete('/:id/pdf', auth, deleteSingleChallengePdf);
 
 module.exports = router
