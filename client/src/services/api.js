@@ -44,5 +44,15 @@ export const userEnrollment = (data, token) =>
 export const getAllUsers = (token) =>
   API.get("/users", { headers: { Authorization: `Bearer ${token}` } })
 
+export const updateSingleChallengeLink = (id, index, newLink, token) =>
+  API.put(`/challenges/${id}/link`, { index, newLink }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+export const updateSingleChallengePdf = (id, index, newPdf, token) =>
+  API.put(`/challenges/${id}/pdf`, { index, newPdf }, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
 export default API
 

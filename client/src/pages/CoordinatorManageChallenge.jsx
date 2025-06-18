@@ -11,7 +11,11 @@ import {
   Chip,
   Divider,
 } from "@mui/material"
-import { getChallengeById } from "../services/api"
+import {
+  getChallengeById,
+  updateSingleChallengeLink,
+  updateSingleChallengePdf,
+} from "../services/api"
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf"
 
 const ChallengeDetails = () => {
@@ -51,6 +55,34 @@ const ChallengeDetails = () => {
   }, [id])
 
   console.log("Challenge Details:", id)
+
+  const handleUpdateLink = async (index, oldLink) => {
+    const newLink = prompt("Enter new link:", oldLink)
+    if (newLink && newLink !== oldLink) {
+      try {
+        await updateSingleChallengeLink(id, index, newLink, token)
+        // Refetch challenge data
+        const updated = await getChallengeById(id)
+        setChallenge(updated)
+      } catch {
+        alert("Failed to update link.")
+      }
+    }
+  }
+
+  const handleUpdatePdf = async (index, oldPdf) => {
+    const newPdf = prompt("Enter new PDF link:", oldPdf)
+    if (newPdf && newPdf !== oldPdf) {
+      try {
+        await updateSingleChallengePdf(id, index, newPdf, token)
+        // Refetch challenge data
+        const updated = await getChallengeById(id)
+        setChallenge(updated)
+      } catch {
+        alert("Failed to update PDF.")
+      }
+    }
+  }
 
   if (loading) {
     return (
@@ -113,49 +145,67 @@ const ChallengeDetails = () => {
               Resources / External Links
             </Typography>
             {challenge.externalLink.map((link, idx) => (
-              <MuiLink
-                key={idx}
-                href={link}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ display: "block", mb: 1 }}
-              >
-                {link}
-              </MuiLink>
+              <Box key={idx} display="flex" alignItems="center" mb={1}>
+                <MuiLink
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{ display: "block", mb: 1, mr: 1 }}
+                >
+                  {link}
+                </MuiLink>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={() => handleUpdateLink(idx, link)}
+                  sx={{ ml: 1 }}
+                >
+                  Update
+                </Button>
+              </Box>
             ))}
           </Box>
         )}
 
         {/* PDFs */}
         {challenge.pdfs.map((pdf, idx) => (
-          <Button
-            key={idx}
-            href={pdf}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-            variant="contained"
-            startIcon={<PictureAsPdfIcon />}
-            size="small"
-            sx={{
-              width: "120px",
-              justifyContent: "flex-start",
-              mb: 1,
-              backgroundColor: "#000",
-              color: "#fff",
-              fontWeight: 500,
-              borderRadius: "4px",
-              textTransform: "none",
-              fontSize: "1rem",
-              px: 2,
-              "&:hover": {
-                backgroundColor: "#333",
+          <Box key={idx} display="flex" alignItems="center" mb={1}>
+            <Button
+              href={pdf}
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+              variant="contained"
+              startIcon={<PictureAsPdfIcon />}
+              size="small"
+              sx={{
+                width: "120px",
+                justifyContent: "flex-start",
+                mb: 1,
+                backgroundColor: "#000",
                 color: "#fff",
-              },
-            }}
-          >
-            PDF {idx + 1}
-          </Button>
+                fontWeight: 500,
+                borderRadius: "4px",
+                textTransform: "none",
+                fontSize: "1rem",
+                px: 2,
+                "&:hover": {
+                  backgroundColor: "#333",
+                  color: "#fff",
+                },
+              }}
+            >
+              PDF {idx + 1}
+            </Button>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => handleUpdatePdf(idx, pdf)}
+              sx={{ ml: 1 }}
+            >
+              Update
+            </Button>
+          </Box>
         ))}
       </Paper>
     </Container>

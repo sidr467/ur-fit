@@ -122,6 +122,7 @@ const ChallengeDetails = () => {
               >
                 {link}
               </MuiLink>
+              
             ))}
           </Box>
         )}
