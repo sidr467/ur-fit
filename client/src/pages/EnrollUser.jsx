@@ -13,6 +13,7 @@ const EnrollUser = () => {
   const [challenges, setChallenges] = useState([])
   const [selectedChallenge, setSelectedChallenge] = useState("")
   const [enrolledUserIds, setEnrolledUserIds] = useState([])
+  const [search, setSearch] = useState("")
   const navigate = useNavigate()
 
   const token = localStorage.getItem("token")
@@ -86,9 +87,29 @@ const EnrollUser = () => {
       )
   }
 
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(search.toLowerCase()) ||
+      user.email.toLowerCase().includes(search.toLowerCase())
+  )
+
   return (
     <div>
       <h2>User List</h2>
+      <input
+        type="text"
+        placeholder="Search users..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          padding: "8px",
+          fontSize: "16px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          width: "300px",
+          marginBottom: "16px",
+        }}
+      />
       <div>
         <label>
           Select Challenge:{" "}
@@ -114,30 +135,20 @@ const EnrollUser = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => {
-            console.log(
-              "user._id:",
-              user._id,
-              "enrolledUserIds:",
-              enrolledUserIds
-            )
-            return (
-              <tr key={user._id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>
-                  {enrolledUserIds.includes(user._id) ? (
-                    <span>Enrolled</span>
-                  ) : (
-                    <button onClick={() => handleEnroll(user._id)}>
-                      Enroll
-                    </button>
-                  )}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
+  {filteredUsers.map((user) => (
+    <tr key={user._id}>
+      <td>{user.name}</td>
+      <td>{user.email}</td>
+      <td>
+        {enrolledUserIds.includes(String(user._id)) ? (
+          <span>Enrolled</span>
+        ) : (
+          <button onClick={() => handleEnroll(user._id)}>Enroll</button>
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
       </table>
     </div>
   )
