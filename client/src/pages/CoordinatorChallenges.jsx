@@ -1,68 +1,75 @@
-import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect, useState } from "react"
+import { jwtDecode } from "jwt-decode"
 import {
   Box,
   Typography,
   Button,
   CircularProgress,
   Container,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import { getAllChallenges, createChallenge } from "../services/api";
-import ChallengeModal from "../components/ChallengeModal";
-import ChallengeCard from "../components/ChallengeCard";
+} from "@mui/material"
+import { useNavigate } from "react-router-dom"
+import Navbar from "../components/Navbar"
+import { getAllChallenges, createChallenge } from "../services/api"
+import ChallengeModal from "../components/ChallengeModal"
+import ChallengeCard from "../components/ChallengeCard"
 
 const CoordinatorChallenges = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  let user = null;
+  const navigate = useNavigate()
+  const token = localStorage.getItem("token")
+  let user = null
 
   try {
-    if (token) user = jwtDecode(token);
+    if (token) user = jwtDecode(token)
   } catch {
-    user = null;
+    user = null
   }
 
-  const [challenges, setChallenges] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [challenges, setChallenges] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [search, setSearch] = useState("")
 
   useEffect(() => {
     if (!user) {
-      navigate("/login");
-      return;
+      navigate("/login")
+      return
     }
     if (user.role !== "coordinator") {
-      navigate("/challenges");
-      return;
+      navigate("/challenges")
+      return
     }
-    fetchChallenges();
-  }, []);
+    fetchChallenges()
+  }, [])
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+    localStorage.removeItem("token")
+    navigate("/login")
+  }
 
   const fetchChallenges = async () => {
-    setLoading(true);
-    const res = await getAllChallenges(token);
-    setChallenges(res.data);
-    setLoading(false);
-  };
+    setLoading(true)
+    const res = await getAllChallenges(token)
+    setChallenges(res.data)
+    setLoading(false)
+  }
+
+  const filteredChallenges = challenges.filter(
+  challenge =>
+    challenge.title.toLowerCase().includes(search.toLowerCase()) ||
+    (challenge.description && challenge.description.toLowerCase().includes(search.toLowerCase()))
+);
 
   const handleCreateChallenge = async (challengeData) => {
     try {
-      await createChallenge(challengeData, token);
-      setModalOpen(false);
-      fetchChallenges();
+      await createChallenge(challengeData, token)
+      setModalOpen(false)
+      fetchChallenges()
     } catch (error) {
-      console.error("Error creating challenge:", error);
+      console.error("Error creating challenge:", error)
     }
-  };
+  }
 
-  if (!user || user.role !== "coordinator") return null;
+  if (!user || user.role !== "coordinator") return null
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
@@ -76,16 +83,39 @@ const CoordinatorChallenges = () => {
             marginBottom: "32px",
           }}
         >
-          <Typography variant="h4" style={{ fontWeight: "bold" }}>
-            Coordinator Dashboard
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={() => setModalOpen(true)}
-            style={{ backgroundColor: "#000" }}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "24px",
+            }}
           >
-            Create New Challenge
-          </Button>
+            <Typography variant="h4" style={{ fontWeight: "bold" }}>
+              Coordinator Dashboard
+            </Typography>
+            <input
+              type="text"
+              placeholder="Search challenges..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{
+                padding: "8px",
+                fontSize: "16px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                width: "300px",
+                marginRight: "16px",
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => setModalOpen(true)}
+              style={{ backgroundColor: "#000" }}
+            >
+              Create New Challenge
+            </Button>
+          </div>
         </div>
 
         {loading ? (
@@ -98,7 +128,7 @@ const CoordinatorChallenges = () => {
           >
             <CircularProgress size={60} />
           </div>
-        ) : challenges.length === 0 ? (
+        ) : filteredChallenges.length === 0 ? (
           <div style={{ textAlign: "center", padding: "48px 0" }}>
             <Typography style={{ color: "#666" }}>
               No challenges created yet
@@ -112,7 +142,7 @@ const CoordinatorChallenges = () => {
               gap: "24px",
             }}
           >
-            {challenges.map((challenge) => (
+            {filteredChallenges.map((challenge) => (
               <ChallengeCard
                 key={challenge._id}
                 challenge={challenge}
@@ -131,7 +161,7 @@ const CoordinatorChallenges = () => {
         />
       </Container>
     </div>
-  );
-};
+  )
+}
 
-export default CoordinatorChallenges;
+export default CoordinatorChallenges
