@@ -8,7 +8,6 @@ import {
   Chip,
   Divider,
   CircularProgress,
-  Grid,
 } from "@mui/material"
 import {
   getChallengeById,
@@ -102,25 +101,28 @@ const CoordinatorManageChallenge = () => {
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
       <Navbar user={user} onLogout={handleLogout} />
       <Container sx={{ py: 6 }}>
-        <Grid container spacing={4} alignItems="flex-start">
-          {/* Left: Image */}
-          <Grid item xs={12} md={5}>
+        <Box
+          display="grid"
+          gridTemplateAreas={`"image details"`}
+          gridTemplateColumns="1fr 2fr"
+          gap={4}
+          alignItems="center"
+        >
+          <Box gridArea="image" display="flex" justifyContent="center">
             {challenge.imageUrl && (
-              <Box mb={3} display="flex" justifyContent="center">
-                <img
-                  src={challenge.imageUrl}
-                  alt={challenge.title}
-                  style={{ maxWidth: "100%", maxHeight: 320, borderRadius: 8 }}
-                />
-              </Box>
+              <img
+                src={challenge.imageUrl}
+                alt={challenge.title}
+                style={{ maxWidth: "100%", maxHeight: 320, borderRadius: 8 }}
+              />
             )}
-          </Grid>
-          {/* Right: Details */}
-          <Grid item xs={12} md={7}>
-            <Typography variant="h4" fontWeight={700} gutterBottom>
+          </Box>
+
+          <Box gridArea="details">
+            <Typography variant="h5" fontWeight={700} gutterBottom>
               {challenge.title}
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               {challenge.description}
             </Typography>
             <Divider sx={{ my: 2 }} />
@@ -131,9 +133,19 @@ const CoordinatorManageChallenge = () => {
               <Chip label={`${challenge.totalDays} Days`} sx={{ mr: 2 }} />
               <Chip label={`${challenge.participantCount} Participants`} />
             </Box>
-            <Divider sx={{ my: 3 }} />
-
-            {/* External Links */}
+          </Box>
+        </Box>
+        <Box
+          display="grid"
+          gridTemplateColumns="1fr 1fr"
+          gridTemplateAreas={`"links pdfs"`}
+          gap={4}
+          mt={4}
+        >
+          <Box gridArea="links">
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+              External Links
+            </Typography>
             <EditableList
               items={challenge.externalLink || []}
               onUpdate={async (idx, value) => {
@@ -151,11 +163,15 @@ const CoordinatorManageChallenge = () => {
                 const updated = await getChallengeById(id)
                 setChallenge(updated)
               }}
-              label="External Links"
+              label="" // Remove label from EditableList, handled above
               type="link"
             />
-
-            {/* PDFs */}
+          </Box>
+          {/* Bottom Right: PDFs */}
+          <Box gridArea="pdfs">
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+              PDF Resources
+            </Typography>
             <EditableList
               items={challenge.pdfs || []}
               onUpdate={async (idx, value) => {
@@ -173,11 +189,11 @@ const CoordinatorManageChallenge = () => {
                 const updated = await getChallengeById(id)
                 setChallenge(updated)
               }}
-              label="PDF Resources"
+              label="" // Remove label from EditableList, handled above
               type="pdf"
             />
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Container>
     </div>
   )
