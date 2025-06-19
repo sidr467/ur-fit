@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react"
 import { jwtDecode } from "jwt-decode"
 import { useNavigate } from "react-router-dom"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
 import {
   getAllUsers,
   getAllChallenges,
   userEnrollment,
   getChallengeById,
 } from "../services/api"
+import Navbar from "../components/Navbar"
 
 const EnrollUser = () => {
   const [users, setUsers] = useState([])
@@ -15,8 +18,25 @@ const EnrollUser = () => {
   const [enrolledUserIds, setEnrolledUserIds] = useState([])
   const [search, setSearch] = useState("")
   const navigate = useNavigate()
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  })
 
   const token = localStorage.getItem("token")
+  let user = null
+
+  try {
+    if (token) user = jwtDecode(token)
+  } catch {
+    user = null
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    navigate("/login")
+  }
 
   useEffect(() => {
     if (!token) {
@@ -63,12 +83,20 @@ const EnrollUser = () => {
 
   const handleEnroll = (userId) => {
     if (!selectedChallenge) {
-      alert("Please select a challenge first.")
+      setSnackbar({
+        open: true,
+        message: "Please select a challenge first.",
+        severity: "error",
+      })
       return
     }
     userEnrollment({ userId, challengeId: selectedChallenge }, token)
       .then((res) => {
-        alert(res.data.message || "Enrolled!")
+        setSnackbar({
+          open: true,
+          message: res.data.message || "Enrolled!",
+          severity: "success",
+        })
         return getChallengeById(selectedChallenge, token)
       })
       .then((challenge) => {
@@ -80,10 +108,13 @@ const EnrollUser = () => {
         setEnrolledUserIds(ids)
       })
       .catch((err) =>
-        alert(
-          err.response?.data?.message ||
-            "Enrollment failed. User may already be enrolled."
-        )
+        setSnackbar({
+          open: true,
+          message:
+            err.response?.data?.message ||
+            "Enrollment failed. User may already be enrolled.",
+          severity: "error",
+        })
       )
   }
 
@@ -95,6 +126,7 @@ const EnrollUser = () => {
 
   return (
     <div>
+      <Navbar user={user} onLogout={handleLogout} />
       <h2>User List</h2>
       <input
         type="text"
@@ -150,6 +182,22 @@ const EnrollUser = () => {
           ))}
         </tbody>
       </table>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   )
 }
