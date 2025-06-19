@@ -41,7 +41,7 @@ const Navbar = ({ user, onLogout }) => {
             <Button
               onClick={onLogout}
               variant="contained"
-              size="small"
+              size="medium"
               sx={{
                 backgroundColor: "#000",
                 color: "#fff",

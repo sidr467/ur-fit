@@ -27,7 +27,7 @@ const ExpandedChallengeCard = ({ challenge, isJoined, onJoin, isCoordinator = fa
           <h2 style={{ 
             margin: '0 0 12px 0',
             fontWeight: '600',
-            fontSize: '26px' 
+            fontSize: '22px' 
           }}>
             <Link 
               to={`/challenges/${challenge._id}`} 
@@ -42,7 +42,8 @@ const ExpandedChallengeCard = ({ challenge, isJoined, onJoin, isCoordinator = fa
 
           <p style={{ 
             margin: '0 0 16px 0',
-            fontSize: '20px' 
+            fontSize: '14px', 
+            color: '#666',
           }}>
             {challenge.description}
           </p>
@@ -52,7 +53,7 @@ const ExpandedChallengeCard = ({ challenge, isJoined, onJoin, isCoordinator = fa
           {challenge.longDescription && (
             <p style={{ 
               margin: '0 0 16px 0',
-              color: '#666',
+              color: '#000',
               fontSize: '16px', 
               maxHeight: '60px',
               overflow: 'hidden',
@@ -71,11 +72,11 @@ const ExpandedChallengeCard = ({ challenge, isJoined, onJoin, isCoordinator = fa
           <div style={{ display: 'flex', gap: '8px' }}>
             <Chip 
               label={`${challenge.totalDays} Days`} 
-              style={{ fontSize: '14px' }} 
+              style={{ fontSize: '12px' }} 
             />
             <Chip 
-              label={`${challenge.participantCount} People`} 
-              style={{ fontSize: '14px' }} 
+              label={`${challenge.participantCount} Participants`} 
+              style={{ fontSize: '12px' }} 
             />
           </div>
 

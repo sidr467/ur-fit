@@ -99,13 +99,13 @@ const Challenges = () => {
         }}
       />
 
-      <Container maxWidth="lg" style={{ padding: "32px 0" }}>
+      <Container maxWidth="lg" style={{ padding: "2px 0" }}>
         <h1
-          style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "8px" }}
+          style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "2px" }}
         >
           Wellness Challenges
         </h1>
-        <p style={{ fontSize: "18px", color: "#666", marginBottom: "24px" }}>
+        <p style={{ fontSize: "16px", color: "#666",  }}>
           Welcome to UR Fit, {user?.name || "User"}!
         </p>
         <div
@@ -135,7 +135,8 @@ const Challenges = () => {
             onClick={() => setUseExpandedView(!useExpandedView)}
             style={{
               padding: "8px 16px",
-              background: "#f0f0f0",
+              background: "#000",
+              color: "#fff",
               border: "1px solid #ddd",
               borderRadius: "4px",
               cursor: "pointer",

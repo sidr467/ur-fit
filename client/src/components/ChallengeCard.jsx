@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { Button, Card, CardContent, Typography } from "@mui/material"
+import { Button, Card, CardContent, Typography,Chip } from "@mui/material"
 
 const ChallengeCard = ({
   challenge,
@@ -84,10 +84,16 @@ const ChallengeCard = ({
             borderTop: "1px solid #f0f0f0",
           }}
         >
-          <Typography variant="caption">{challenge.totalDays} days</Typography>
-          <Typography variant="caption">
-            {challenge.participantCount} participants
-          </Typography>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <Chip
+              label={`${challenge.totalDays} Days`}
+              style={{ fontSize: "12px" }}
+            />
+            <Chip
+              label={`${challenge.participantCount} Participants`}
+              style={{ fontSize: "12px" }}
+            />
+          </div>
         </div>
       </CardContent>
 
