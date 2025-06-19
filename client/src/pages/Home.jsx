@@ -1,8 +1,12 @@
-import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import React from "react"
+import { Box, Button, Typography } from "@mui/material"
+import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
+  const token = localStorage.getItem("token")
+  const navigate = useNavigate()
+
   return (
     <Box
       display="flex"
@@ -15,54 +19,74 @@ const Home = () => {
       padding={4}
     >
       <Typography variant="h3" gutterBottom>
-        Welcome to Campus Wellness Challenge
+        Welcome to Campus Wellness Challenge UR Fit
       </Typography>
       <Typography variant="h6" gutterBottom>
         Join wellness challenges and build healthy habits with your university community.
       </Typography>
-
-      <Box mt={4}>
-        <Button
-          component={Link}
-          to="/login"
-          variant="contained"
-          size="large"
-          sx={{
-            backgroundColor: '#000',
-            color: '#fff',
-            fontWeight: 500,
-            borderRadius: '4px',
-            marginRight: 2,
-            '&:hover': {
-              backgroundColor: '#333',
-              color: '#fff'
-            }
-          }}
-        >
-          Login
-        </Button>
-
-        <Button
-          component={Link}
-          to="/signup"
-          variant="contained"
-          size="large"
-          sx={{
-            backgroundColor: '#000',
-            color: '#fff',
-            fontWeight: 500,
-            borderRadius: '4px',
-            '&:hover': {
-              backgroundColor: '#333',
-              color: '#fff'
-            }
-          }}
-        >
-          Sign Up
-        </Button>
-      </Box>
+      {token ? (
+       <Button
+            component={Link}
+            to="/challenges"
+            variant="contained"
+            size="large"
+            sx={{
+              backgroundColor: "#000",
+              color: "#fff",
+              fontWeight: 500,
+              borderRadius: "4px",
+              marginRight: 2,
+              "&:hover": {
+                backgroundColor: "#333",
+                color: "#fff",
+              },
+            }}
+          >
+          Go to Dashboard
+          </Button>
+      ) : (
+        <Box mt={4}>
+          <Button
+            component={Link}
+            to="/login"
+            variant="contained"
+            size="large"
+            sx={{
+              backgroundColor: "#000",
+              color: "#fff",
+              fontWeight: 500,
+              borderRadius: "4px",
+              marginRight: 2,
+              "&:hover": {
+                backgroundColor: "#333",
+                color: "#fff",
+              },
+            }}
+          >
+            Login
+          </Button>
+          <Button
+            component={Link}
+            to="/signup"
+            variant="contained"
+            size="large"
+            sx={{
+              backgroundColor: "#000",
+              color: "#fff",
+              fontWeight: 500,
+              borderRadius: "4px",
+              "&:hover": {
+                backgroundColor: "#333",
+                color: "#fff",
+              },
+            }}
+          >
+            Sign Up
+          </Button>
+        </Box>
+      )}
     </Box>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
