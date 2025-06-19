@@ -8,7 +8,7 @@ import {
   Chip,
   Divider,
   CircularProgress,
-  Grid,
+  Button,
 } from "@mui/material"
 import { getChallengeById } from "../services/api"
 import Navbar from "../components/Navbar"
@@ -93,25 +93,28 @@ const ChallengeDetails = () => {
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
       <Navbar user={user} onLogout={handleLogout} />
       <Container sx={{ py: 6 }}>
-        <Grid container spacing={4} alignItems="flex-start">
-          {/* Left: Image */}
-          <Grid item xs={12} md={5}>
+        {/* Top: Image and Details */}
+        <Box
+          display="grid"
+          gridTemplateAreas={`"image details"`}
+          gridTemplateColumns="1fr 2fr"
+          gap={4}
+          alignItems="center"
+        >
+          <Box gridArea="image" display="flex" justifyContent="center">
             {challenge.imageUrl && (
-              <Box mb={3} display="flex" justifyContent="center">
-                <img
-                  src={challenge.imageUrl}
-                  alt={challenge.title}
-                  style={{ maxWidth: "100%", maxHeight: 320, borderRadius: 8 }}
-                />
-              </Box>
+              <img
+                src={challenge.imageUrl}
+                alt={challenge.title}
+                style={{ maxWidth: "100%", maxHeight: 320, borderRadius: 8 }}
+              />
             )}
-          </Grid>
-          {/* Right: Details */}
-          <Grid item xs={12} md={7}>
-            <Typography variant="h4" fontWeight={700} gutterBottom>
+          </Box>
+          <Box gridArea="details">
+            <Typography variant="h5" fontWeight={700} gutterBottom>
               {challenge.title}
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               {challenge.description}
             </Typography>
             <Divider sx={{ my: 2 }} />
@@ -122,66 +125,79 @@ const ChallengeDetails = () => {
               <Chip label={`${challenge.totalDays} Days`} sx={{ mr: 2 }} />
               <Chip label={`${challenge.participantCount} Participants`} />
             </Box>
-            <Divider sx={{ my: 3 }} />
-
-            {/* External Links */}
-            {challenge.externalLink && challenge.externalLink.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  Resources / External Links
-                </Typography>
-                {challenge.externalLink.map((link, idx) => (
-                  <Box key={idx} display="flex" alignItems="center" mb={1}>
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display: "block",
-                        marginBottom: 8,
-                        marginRight: 8,
-                        color: "#1976d2",
-                        textDecoration: "underline",
-                        wordBreak: "break-all",
-                      }}
-                    >
-                      {link}
-                    </a>
-                  </Box>
-                ))}
-              </Box>
+          </Box>
+        </Box>
+        {/* Bottom: Links and PDFs side by side */}
+        <Box
+          display="grid"
+          gridTemplateColumns="1fr 1fr"
+          gridTemplateAreas={`"links pdfs"`}
+          gap={4}
+          mt={4}
+        >
+          <Box gridArea="links">
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+              External Links
+            </Typography>
+            {challenge.externalLink && challenge.externalLink.length > 0 ? (
+              challenge.externalLink.map((link, idx) => (
+                <Box key={idx} display="flex" alignItems="center" mb={1}>
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      marginRight: 8,
+                      color: "#1976d2",
+                      textDecoration: "underline",
+                      wordBreak: "break-all",
+                    }}
+                  >
+                    {link}
+                  </a>
+                </Box>
+              ))
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No external links.
+              </Typography>
             )}
-
-            {/* PDFs */}
-            {challenge.pdfs && challenge.pdfs.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                  PDF Resources
-                </Typography>
-                {challenge.pdfs.map((pdf, idx) => (
-                  <Box key={idx} display="flex" alignItems="center" mb={1}>
-                    <a
-                      href={pdf}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download
-                      style={{
-                        display: "block",
-                        marginBottom: 8,
-                        marginRight: 8,
-                        color: "#1976d2",
-                        textDecoration: "underline",
-                        wordBreak: "break-all",
-                      }}
-                    >
-                      PDF {idx + 1}
-                    </a>
-                  </Box>
-                ))}
-              </Box>
+          </Box>
+          <Box gridArea="pdfs">
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
+              PDF Resources
+            </Typography>
+            {challenge.pdfs && challenge.pdfs.length > 0 ? (
+              challenge.pdfs.map((pdf, idx) => (
+                <Box key={idx} display="flex" alignItems="center" mb={1}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    href={pdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                    sx={{
+                      textTransform: "none",
+                      backgroundColor: "#000",
+                      color: "#fff",
+                      "&:hover": { backgroundColor: "#333" },
+                      mb: 1,
+                    }}
+                  >
+                    PDF {idx + 1}
+                  </Button>
+                </Box>
+              ))
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No PDF resources.
+              </Typography>
             )}
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Container>
     </div>
   )
