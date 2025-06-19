@@ -1,68 +1,83 @@
-import React, { useEffect, useState } from "react"
-import { jwtDecode } from "jwt-decode"
-import { useNavigate } from "react-router-dom"
-import Snackbar from "@mui/material/Snackbar"
-import MuiAlert from "@mui/material/Alert"
+import React, { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Snackbar,
+  Container,
+  Typography,
+  Box,
+} from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import {
   getAllUsers,
   getAllChallenges,
   userEnrollment,
   getChallengeById,
-} from "../services/api"
-import Navbar from "../components/Navbar"
+} from "../services/api";
+import Navbar from "../components/Navbar";
 
 const EnrollUser = () => {
-  const [users, setUsers] = useState([])
-  const [challenges, setChallenges] = useState([])
-  const [selectedChallenge, setSelectedChallenge] = useState("")
-  const [enrolledUserIds, setEnrolledUserIds] = useState([])
-  const [search, setSearch] = useState("")
-  const navigate = useNavigate()
+  const [users, setUsers] = useState([]);
+  const [challenges, setChallenges] = useState([]);
+  const [selectedChallenge, setSelectedChallenge] = useState("");
+  const [enrolledUserIds, setEnrolledUserIds] = useState([]);
+  const [search, setSearch] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "info",
-  })
+  });
 
-  const token = localStorage.getItem("token")
-  let user = null
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  let user = null;
 
   try {
-    if (token) user = jwtDecode(token)
+    if (token) user = jwtDecode(token);
   } catch {
-    user = null
+    user = null;
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("token")
-    navigate("/login")
-  }
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   useEffect(() => {
     if (!token) {
-      navigate("/login")
-      return
+      navigate("/login");
+      return;
     }
     try {
-      const decoded = jwtDecode(token)
+      const decoded = jwtDecode(token);
       if (decoded.role !== "coordinator") {
-        navigate("/login")
-        return
+        navigate("/login");
+        return;
       }
     } catch {
-      navigate("/login")
-      return
+      navigate("/login");
+      return;
     }
-  }, [token, navigate])
+  }, [token, navigate]);
 
   useEffect(() => {
+    if (!token) return;
     getAllUsers(token)
       .then((res) => setUsers(res.data))
-      .catch(() => setUsers([]))
+      .catch(() => setUsers([]));
     getAllChallenges(token)
       .then((res) => setChallenges(res.data))
-      .catch(() => setChallenges([]))
-  }, [token])
+      .catch(() => setChallenges([]));
+  }, [token]);
 
   useEffect(() => {
     if (selectedChallenge) {
@@ -72,14 +87,14 @@ const EnrollUser = () => {
             ? challenge.participants.map((u) =>
                 typeof u === "string" ? u : String(u._id)
               )
-            : []
-          setEnrolledUserIds(ids)
+            : [];
+          setEnrolledUserIds(ids);
         })
-        .catch(() => setEnrolledUserIds([]))
+        .catch(() => setEnrolledUserIds([]));
     } else {
-      setEnrolledUserIds([])
+      setEnrolledUserIds([]);
     }
-  }, [selectedChallenge, token])
+  }, [selectedChallenge, token]);
 
   const handleEnroll = (userId) => {
     if (!selectedChallenge) {
@@ -87,8 +102,8 @@ const EnrollUser = () => {
         open: true,
         message: "Please select a challenge first.",
         severity: "error",
-      })
-      return
+      });
+      return;
     }
     userEnrollment({ userId, challengeId: selectedChallenge }, token)
       .then((res) => {
@@ -96,16 +111,16 @@ const EnrollUser = () => {
           open: true,
           message: res.data.message || "Enrolled!",
           severity: "success",
-        })
-        return getChallengeById(selectedChallenge, token)
+        });
+        return getChallengeById(selectedChallenge, token);
       })
       .then((challenge) => {
         const ids = Array.isArray(challenge.participants)
           ? challenge.participants.map((u) =>
               typeof u === "string" ? u : String(u._id)
             )
-          : []
-        setEnrolledUserIds(ids)
+          : [];
+        setEnrolledUserIds(ids);
       })
       .catch((err) =>
         setSnackbar({
@@ -115,73 +130,96 @@ const EnrollUser = () => {
             "Enrollment failed. User may already be enrolled.",
           severity: "error",
         })
-      )
-  }
+      );
+  };
 
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(search.toLowerCase()) ||
       user.email.toLowerCase().includes(search.toLowerCase())
-  )
+  );
 
   return (
     <div>
       <Navbar user={user} onLogout={handleLogout} />
-      <h2>User List</h2>
-      <input
-        type="text"
-        placeholder="Search users..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{
-          padding: "8px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          width: "300px",
-          marginBottom: "16px",
-        }}
-      />
-      <div>
-        <label>
-          Select Challenge:{" "}
-          <select
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
+          User Enrollment
+        </Typography>
+        <Box
+          display="flex"
+          gap={2}
+          mb={3}
+          alignItems="center"
+          flexWrap="wrap"
+        >
+          <TextField
+            label="Search users"
+            variant="outlined"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            sx={{ width: 300 }}
+          />
+          <Select
             value={selectedChallenge}
             onChange={(e) => setSelectedChallenge(e.target.value)}
+            displayEmpty
+            variant="outlined"
+            sx={{ minWidth: 300 }}
           >
-            <option value="">--Select--</option>
-            {challenges.map((ch) => (
-              <option key={ch._id} value={ch._id}>
-                {ch.title}
-              </option>
+            <MenuItem value="">
+              <em>Select a challenge</em>
+            </MenuItem>
+            {challenges.map((challenge) => (
+              <MenuItem key={challenge._id} value={challenge._id}>
+                {challenge.title}
+              </MenuItem>
             ))}
-          </select>
-        </label>
-      </div>
-      <table border="1" cellPadding="8" style={{ marginTop: 16 }}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Enroll</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user._id}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>
-                {enrolledUserIds.includes(String(user._id)) ? (
-                  <span>Enrolled</span>
-                ) : (
-                  <button onClick={() => handleEnroll(user._id)}>Enroll</button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </Select>
+        </Box>
+        <Table
+          sx={{
+            border: "1px solid #e0e0e0",
+            borderRadius: "4px",
+            overflow: "hidden",
+          }}
+        >
+          <TableHead sx={{ backgroundColor: "#f5f5f5" }}>
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredUsers.map((user) => (
+              <TableRow key={user._id} hover>
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  {enrolledUserIds.includes(String(user._id)) ? (
+                    <span style={{ color: "#4caf50" }}>Enrolled</span>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => handleEnroll(user._id)}
+                      sx={{
+                        backgroundColor: "#000",
+                        color: "#fff",
+                        textTransform: "none",
+                        "&:hover": { backgroundColor: "#333" },
+                      }}
+                    >
+                      Enroll
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Container>
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
@@ -199,7 +237,7 @@ const EnrollUser = () => {
         </MuiAlert>
       </Snackbar>
     </div>
-  )
-}
+  );
+};
 
-export default EnrollUser
+export default EnrollUser;
