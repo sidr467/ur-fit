@@ -277,3 +277,43 @@ exports.deleteSingleChallengePdf = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
+
+exports.editChallenge = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, longDescription } = req.body;
+
+  try {
+    const challenge = await Challenge.findById(id);
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+
+    if (title !== undefined) challenge.title = title;
+    if (description !== undefined) challenge.description = description;
+    if (longDescription !== undefined) challenge.longDescription = longDescription;
+
+    await challenge.save();
+
+    res.status(200).json({ message: "Challenge updated successfully", challenge });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+exports.deleteChallenge = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const challenge = await Challenge.findByIdAndDelete(id);
+    if (!challenge) {
+      return res.status(404).json({ message: "Challenge not found" });
+    }
+    // Optionally, remove this challenge from users' joinedChallenges arrays
+    await User.updateMany(
+      { joinedChallenges: id },
+      { $pull: { joinedChallenges: id } }
+    );
+    res.status(200).json({ message: "Challenge deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};

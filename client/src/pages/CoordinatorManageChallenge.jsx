@@ -8,6 +8,8 @@ import {
   Chip,
   Divider,
   CircularProgress,
+  Button,
+  TextField,
 } from "@mui/material"
 import {
   getChallengeById,
@@ -17,6 +19,8 @@ import {
   addChallengePdf,
   deleteSingleChallengeLink,
   deleteSingleChallengePdf,
+  editChallenge,
+  deleteChallenge,
 } from "../services/api"
 import EditableList from "../components/EditableList"
 import Navbar from "../components/Navbar"
@@ -28,12 +32,28 @@ const CoordinatorManageChallenge = () => {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
   let user = null
+  const [editMode, setEditMode] = useState(false)
+  const [editFields, setEditFields] = useState({
+    title: "",
+    description: "",
+    longDescription: "",
+  })
 
   try {
     if (token) user = jwtDecode(token)
   } catch {
     user = null
   }
+
+  useEffect(() => {
+    if (challenge) {
+      setEditFields({
+        title: challenge.title || "",
+        description: challenge.description || "",
+        longDescription: challenge.longDescription || "",
+      })
+    }
+  }, [challenge])
 
   useEffect(() => {
     if (!token) {
@@ -67,6 +87,21 @@ const CoordinatorManageChallenge = () => {
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/login")
+  }
+
+  const handleDelete = async () => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this challenge? This action cannot be undone."
+      )
+    ) {
+      try {
+        await deleteChallenge(challenge._id, token)
+        navigate("/coordinator-challenges")
+      } catch (err) {
+        alert(err.response?.data?.message || "Failed to delete challenge")
+      }
+    }
   }
 
   if (loading) {
@@ -119,20 +154,105 @@ const CoordinatorManageChallenge = () => {
           </Box>
 
           <Box gridArea="details">
-            <Typography variant="h5" fontWeight={700} gutterBottom>
-              {challenge.title}
-            </Typography>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              {challenge.description}
-            </Typography>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {challenge.longDescription}
-            </Typography>
-            <Box sx={{ mb: 2 }}>
-              <Chip label={`${challenge.totalDays} Days`} sx={{ mr: 2 }} />
-              <Chip label={`${challenge.participantCount} Participants`} />
-            </Box>
+            {editMode ? (
+              <>
+                <TextField
+                  label="Title"
+                  value={editFields.title}
+                  onChange={(e) =>
+                    setEditFields({ ...editFields, title: e.target.value })
+                  }
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Description"
+                  value={editFields.description}
+                  onChange={(e) =>
+                    setEditFields({
+                      ...editFields,
+                      description: e.target.value,
+                    })
+                  }
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Long Description"
+                  value={editFields.longDescription}
+                  onChange={(e) =>
+                    setEditFields({
+                      ...editFields,
+                      longDescription: e.target.value,
+                    })
+                  }
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  sx={{ mb: 2 }}
+                />
+                <Button
+                  variant="contained"
+                  sx={{ mr: 2, backgroundColor: "#000" }}
+                  onClick={async () => {
+                    try {
+                      await editChallenge(challenge._id, editFields, token)
+                      setEditMode(false)
+                      const updated = await getChallengeById(
+                        challenge._id,
+                        token
+                      )
+                      setChallenge(updated)
+                    } catch (err) {
+                      // Handle error (show Snackbar, etc.)
+                    }
+                  }}
+                >
+                  Save
+                </Button>
+                <Button variant="outlined" onClick={() => setEditMode(false)}>
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <Typography variant="h4" fontWeight={700} gutterBottom>
+                  {challenge.title}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="text.secondary"
+                  gutterBottom
+                >
+                  {challenge.description}
+                </Typography>
+                <Divider sx={{ my: 2 }} />
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  {challenge.longDescription}
+                </Typography>
+                <Button
+                  variant="outlined"
+                  sx={{ mt: 2 }}
+                  color="black"
+                  onClick={() => setEditMode(true)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  sx={{
+                    mt: 2,
+                    ml: 2,
+                    borderColor: "#d32f2f",
+                    color: "#d32f2f",
+                  }}
+                  onClick={handleDelete}
+                >
+                  Delete
+                </Button>
+              </>
+            )}
           </Box>
         </Box>
         <Box

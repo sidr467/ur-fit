@@ -83,13 +83,23 @@ export const addChallengePdf = (id, pdf, token) =>
 export const deleteSingleChallengeLink = (id, index, token) =>
   API.delete(`/challenges/${id}/link`, {
     data: { index },
-    headers: { Authorization: `Bearer ${token}` }
-  });
+    headers: { Authorization: `Bearer ${token}` },
+  })
 
 export const deleteSingleChallengePdf = (id, index, token) =>
   API.delete(`/challenges/${id}/pdf`, {
     data: { index },
-    headers: { Authorization: `Bearer ${token}` }
-  });
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+export const editChallenge = async (id, data, token) =>
+  axios.put(`/api/challenges/${id}/edit`, data, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+
+export const deleteChallenge = async (id, token) =>
+  axios.delete(`/api/challenges/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
 
 export default API
