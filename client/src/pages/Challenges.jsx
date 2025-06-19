@@ -10,6 +10,8 @@ import {
 } from "../services/api"
 import ChallengeCard from "../components/ChallengeCard"
 import ExpandedChallengeCard from "../components/ExpandedChallengeCard"
+import Snackbar from "@mui/material/Snackbar"
+import MuiAlert from "@mui/material/Alert"
 
 const Challenges = () => {
   const navigate = useNavigate()
@@ -23,7 +25,12 @@ const Challenges = () => {
     const savedTab = localStorage.getItem("challengesTab")
     return savedTab !== null ? Number(savedTab) : 0
   })
-  // Get user from the token
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  })
+
   let user = null
   try {
     if (token) user = jwtDecode(token)
@@ -31,7 +38,6 @@ const Challenges = () => {
     user = null
   }
 
-  // Fetch data functions
   const fetchAll = async () => {
     setLoading(true)
     const res = await getAllChallenges(token)
@@ -75,6 +81,11 @@ const Challenges = () => {
 
   const handleJoin = async (challengeId) => {
     await joinChallenge(challengeId, token)
+    setSnackbar({
+      open: true,
+      message: "Successfully joined the challenge!",
+      severity: "success",
+    })
     fetchAll()
     fetchJoined()
   }
@@ -105,7 +116,7 @@ const Challenges = () => {
         >
           Wellness Challenges
         </h1>
-        <p style={{ fontSize: "16px", color: "#666",  }}>
+        <p style={{ fontSize: "16px", color: "#666" }}>
           Welcome to UR Fit, {user?.name || "User"}!
         </p>
         <div
@@ -152,7 +163,9 @@ const Challenges = () => {
           value={tab}
           onChange={handleTabChange}
           variant="fullWidth"
-          TabIndicatorProps={{ style: { backgroundColor: "#000", height: 1.5 } }}
+          TabIndicatorProps={{
+            style: { backgroundColor: "#000", height: 1.5 },
+          }}
           sx={{
             marginBottom: "24px",
             minHeight: 0,
@@ -269,6 +282,22 @@ const Challenges = () => {
           </div>
         )}
       </Container>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   )
 }

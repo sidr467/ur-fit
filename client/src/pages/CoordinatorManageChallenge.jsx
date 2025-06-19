@@ -194,7 +194,7 @@ const CoordinatorManageChallenge = () => {
                       )
                       setChallenge(updated)
                     } catch (err) {
-                      // Handle error (show Snackbar, etc.)
+                      //handle error
                     }
                   }}
                 >
@@ -282,7 +282,7 @@ const CoordinatorManageChallenge = () => {
               type="link"
             />
           </Box>
-          {/* Bottom Right: PDFs */}
+          {/* Bottom Right PDFs */}
           <Box gridArea="pdfs">
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               PDF Resources
