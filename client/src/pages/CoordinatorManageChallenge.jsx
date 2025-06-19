@@ -5,11 +5,15 @@ import {
   Box,
   Typography,
   Container,
-  Chip,
   Divider,
   CircularProgress,
   Button,
   TextField,
+  Dialog,
+  Chip,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material"
 import {
   getChallengeById,
@@ -38,6 +42,7 @@ const CoordinatorManageChallenge = () => {
     description: "",
     longDescription: "",
   })
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   try {
     if (token) user = jwtDecode(token)
@@ -87,21 +92,6 @@ const CoordinatorManageChallenge = () => {
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/login")
-  }
-
-  const handleDelete = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to delete this challenge? This action cannot be undone."
-      )
-    ) {
-      try {
-        await deleteChallenge(challenge._id, token)
-        navigate("/coordinator-challenges")
-      } catch (err) {
-        alert(err.response?.data?.message || "Failed to delete challenge")
-      }
-    }
   }
 
   if (loading) {
@@ -230,6 +220,11 @@ const CoordinatorManageChallenge = () => {
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   {challenge.longDescription}
                 </Typography>
+                <Box sx={{ mb: 2 }}>
+                  <Chip label={`${challenge.totalDays} Days`} sx={{ mr: 2 }} />
+                  <Chip label={`${challenge.participantCount} Participants`} />
+                </Box>
+                <Divider />
                 <Button
                   variant="outlined"
                   sx={{ mt: 2 }}
@@ -247,7 +242,7 @@ const CoordinatorManageChallenge = () => {
                     borderColor: "#d32f2f",
                     color: "#d32f2f",
                   }}
-                  onClick={handleDelete}
+                  onClick={() => setDeleteDialogOpen(true)}
                 >
                   Delete
                 </Button>
@@ -283,7 +278,7 @@ const CoordinatorManageChallenge = () => {
                 const updated = await getChallengeById(id)
                 setChallenge(updated)
               }}
-              label="" // Remove label from EditableList, handled above
+              label=""
               type="link"
             />
           </Box>
@@ -309,12 +304,45 @@ const CoordinatorManageChallenge = () => {
                 const updated = await getChallengeById(id)
                 setChallenge(updated)
               }}
-              label="" // Remove label from EditableList, handled above
+              label=""
               type="pdf"
             />
           </Box>
         </Box>
       </Container>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Delete Challenge</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this challenge? This action cannot be
+          undone.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="black">
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              try {
+                await deleteChallenge(challenge._id, token)
+                setDeleteDialogOpen(false)
+                navigate("/coordinator-challenges")
+              } catch (err) {
+                setDeleteDialogOpen(false)
+                alert(
+                  err.response?.data?.message || "Failed to delete challenge"
+                )
+              }
+            }}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   )
 }

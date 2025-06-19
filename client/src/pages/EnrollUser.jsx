@@ -157,6 +157,7 @@ const EnrollUser = () => {
             label="Search users"
             variant="outlined"
             value={search}
+            color="black"
             onChange={(e) => setSearch(e.target.value)}
             sx={{ width: 300 }}
           />
@@ -164,6 +165,7 @@ const EnrollUser = () => {
             value={selectedChallenge}
             onChange={(e) => setSelectedChallenge(e.target.value)}
             displayEmpty
+            color="black"
             variant="outlined"
             sx={{ minWidth: 300 }}
           >

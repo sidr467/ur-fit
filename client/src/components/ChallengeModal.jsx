@@ -160,8 +160,19 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button onClick={onClose} color="black" variant="outlined">
+          Cancel
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleSubmit}
+          color="black"
+          sx={{
+            backgroundColor: "black",
+            color: "white",
+            "&:hover": { backgroundColor: "#333" },
+          }}
+        >
           Create
         </Button>
       </DialogActions>
