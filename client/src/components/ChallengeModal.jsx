@@ -12,7 +12,14 @@ import {
 } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
 
+/**
+ * ChallengeModal Component
+ * ------------------------
+ * Renders a modal dialog for creating a new challenge.
+ */
+
 const ChallengeModal = ({ open, onClose, onCreate }) => {
+  // State for form fields, error message, and image file
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -25,19 +32,23 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
   const [error, setError] = useState("")
   const [imageFile, setImageFile] = useState(null)
 
+  // Handle text input changes
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Handle image file selection
   const handleFileChange = (e) => {
     setImageFile(e.target.files[0])
   }
 
+  // Handle form submission
   const handleSubmit = async () => {
     setError("")
     let imageUrl = form.imageUrl
 
+    // Upload image if a file is selected
     if (imageFile) {
       const data = new FormData()
       data.append("image", imageFile)
@@ -49,10 +60,13 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
       imageUrl = result.imageUrl
     }
 
+    // Validate required fields
     if (!form.title || !form.description || !form.totalDays) {
       setError("Title, Description, and Total Days are required.")
       return
     }
+
+    // Call onCreate with the new challenge data
     onCreate({
       ...form,
       imageUrl,
@@ -62,6 +76,8 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
         : [],
       pdfs: form.pdfs ? form.pdfs.split(",").map((l) => l.trim()) : [],
     })
+
+    // Reset form and image file
     setForm({
       title: "",
       description: "",
@@ -78,6 +94,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
         Create New Challenge
+        {/* Close button in the top-right corner */}
         <IconButton
           aria-label="close"
           onClick={onClose}
@@ -87,6 +104,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
         </IconButton>
       </DialogTitle>
       <DialogContent>
+        {/* Title input */}
         <TextField
           margin="normal"
           label="Title"
@@ -96,6 +114,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           required
         />
+        {/* Short Description input */}
         <TextField
           margin="normal"
           label="Short Description"
@@ -105,6 +124,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           required
         />
+        {/* Long Description input */}
         <TextField
           margin="normal"
           label="Long Description"
@@ -115,6 +135,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           value={form.longDescription}
           onChange={handleChange}
         />
+        {/* Total Days input */}
         <TextField
           margin="normal"
           label="Total Days"
@@ -125,6 +146,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           required
         />
+        {/* Image upload input */}
         <TextField
           margin="normal"
           label="Upload Image"
@@ -135,6 +157,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           inputProps={{ accept: "image/*" }}
           onChange={handleFileChange}
         />
+        {/* External Links input */}
         <TextField
           margin="normal"
           label="External Links (comma separated)"
@@ -144,6 +167,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           placeholder="https://youtube.com/..., https://resource.com/..."
         />
+        {/* PDF Links input */}
         <TextField
           margin="normal"
           label="PDF Links (comma separated)"
@@ -153,6 +177,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
           onChange={handleChange}
           placeholder="https://example.com/file.pdf"
         />
+        {/* Error message */}
         {error && (
           <Typography color="error" sx={{ mt: 1 }}>
             {error}
@@ -160,6 +185,7 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
         )}
       </DialogContent>
       <DialogActions>
+        {/* Cancel and Create buttons */}
         <Button onClick={onClose} color="black" variant="outlined">
           Cancel
         </Button>

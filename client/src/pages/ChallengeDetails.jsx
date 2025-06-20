@@ -13,20 +13,29 @@ import {
 import { getChallengeById } from "../services/api"
 import Navbar from "../components/Navbar"
 
+/**
+ * ChallengeDetails Component
+ * --------------------------
+ * Displays detailed information for a single challenge.
+ */
+
 const ChallengeDetails = () => {
   const { id } = useParams()
+  // State for challenge data and loading indicator
   const [challenge, setChallenge] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
   let user = null
 
+  // Decode user from JWT token if available
   try {
     if (token) user = jwtDecode(token)
   } catch {
     user = null
   }
 
+  // Redirect to login if not authenticated or not a participant
   useEffect(() => {
     if (!token) {
       navigate("/login")
@@ -42,6 +51,7 @@ const ChallengeDetails = () => {
     }
   }, [token, navigate])
 
+  // Fetch challenge data by ID
   useEffect(() => {
     const fetchChallenge = async () => {
       setLoading(true)
@@ -56,11 +66,13 @@ const ChallengeDetails = () => {
     fetchChallenge()
   }, [id])
 
+  // Handle logout and redirect to login
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/login")
   }
 
+  // Show loading spinner while fetching data
   if (loading) {
     return (
       <Box
@@ -74,6 +86,7 @@ const ChallengeDetails = () => {
     )
   }
 
+  // Show error if challenge not found
   if (!challenge) {
     return (
       <Box
@@ -91,6 +104,7 @@ const ChallengeDetails = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
+      {/* Top navigation bar */}
       <Navbar user={user} onLogout={handleLogout} />
       <Container sx={{ py: 6 }}>
         {/* Top: Image and Details */}
@@ -101,6 +115,7 @@ const ChallengeDetails = () => {
           gap={4}
           alignItems="center"
         >
+          {/* Challenge image */}
           <Box gridArea="image" display="flex" justifyContent="center">
             {challenge.imageUrl && (
               <img
@@ -110,6 +125,7 @@ const ChallengeDetails = () => {
               />
             )}
           </Box>
+          {/* Challenge details */}
           <Box gridArea="details">
             <Typography variant="h5" fontWeight={700} gutterBottom>
               {challenge.title}
@@ -121,6 +137,7 @@ const ChallengeDetails = () => {
             <Typography variant="body1" sx={{ mb: 2 }}>
               {challenge.longDescription}
             </Typography>
+            {/* Chips for duration and participant count */}
             <Box sx={{ mb: 2 }}>
               <Chip label={`${challenge.totalDays} Days`} sx={{ mr: 2 }} />
               <Chip label={`${challenge.participantCount} Participants`} />
@@ -135,6 +152,7 @@ const ChallengeDetails = () => {
           gap={4}
           mt={4}
         >
+          {/* External Links section */}
           <Box gridArea="links">
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               External Links
@@ -165,6 +183,7 @@ const ChallengeDetails = () => {
               </Typography>
             )}
           </Box>
+          {/* PDF Resources section */}
           <Box gridArea="pdfs">
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               PDF Resources

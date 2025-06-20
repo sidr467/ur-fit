@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react"
+import { jwtDecode } from "jwt-decode"
+import { useNavigate } from "react-router-dom"
 import {
   Button,
   TextField,
@@ -15,70 +15,82 @@ import {
   Container,
   Typography,
   Box,
-} from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
+} from "@mui/material"
+import MuiAlert from "@mui/material/Alert"
 import {
   getAllUsers,
   getAllChallenges,
   userEnrollment,
   getChallengeById,
-} from "../services/api";
-import Navbar from "../components/Navbar";
+} from "../services/api"
+import Navbar from "../components/Navbar"
+
+/**
+ * EnrollUser Page
+ * ---------------
+ * Allows coordinators to enroll users into challenges.
+ */
 
 const EnrollUser = () => {
-  const [users, setUsers] = useState([]);
-  const [challenges, setChallenges] = useState([]);
-  const [selectedChallenge, setSelectedChallenge] = useState("");
-  const [enrolledUserIds, setEnrolledUserIds] = useState([]);
-  const [search, setSearch] = useState("");
+  // State for users, challenges, selected challenge, enrolled users, search, and snackbar
+  const [users, setUsers] = useState([])
+  const [challenges, setChallenges] = useState([])
+  const [selectedChallenge, setSelectedChallenge] = useState("")
+  const [enrolledUserIds, setEnrolledUserIds] = useState([])
+  const [search, setSearch] = useState("")
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "info",
-  });
+  })
 
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  let user = null;
+  const navigate = useNavigate()
+  const token = localStorage.getItem("token")
+  let user = null
 
+  // Decode user from JWT token if available
   try {
-    if (token) user = jwtDecode(token);
+    if (token) user = jwtDecode(token)
   } catch {
-    user = null;
+    user = null
   }
 
+  // Logout handler
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
+    localStorage.removeItem("token")
+    navigate("/login")
+  }
 
+  // Redirect to login if not authenticated or not a coordinator
   useEffect(() => {
     if (!token) {
-      navigate("/login");
-      return;
+      navigate("/login")
+      return
     }
     try {
-      const decoded = jwtDecode(token);
+      const decoded = jwtDecode(token)
       if (decoded.role !== "coordinator") {
-        navigate("/login");
-        return;
+        navigate("/login")
+        return
       }
     } catch {
-      navigate("/login");
-      return;
+      navigate("/login")
+      return
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
+  // Fetch all users and challenges on mount
   useEffect(() => {
-    if (!token) return;
+    if (!token) return
     getAllUsers(token)
       .then((res) => setUsers(res.data))
-      .catch(() => setUsers([]));
+      .catch(() => setUsers([]))
     getAllChallenges(token)
       .then((res) => setChallenges(res.data))
-      .catch(() => setChallenges([]));
-  }, [token]);
+      .catch(() => setChallenges([]))
+  }, [token])
 
+  // Fetch enrolled user IDs when selected challenge changes
   useEffect(() => {
     if (selectedChallenge) {
       getChallengeById(selectedChallenge, token)
@@ -87,23 +99,24 @@ const EnrollUser = () => {
             ? challenge.participants.map((u) =>
                 typeof u === "string" ? u : String(u._id)
               )
-            : [];
-          setEnrolledUserIds(ids);
+            : []
+          setEnrolledUserIds(ids)
         })
-        .catch(() => setEnrolledUserIds([]));
+        .catch(() => setEnrolledUserIds([]))
     } else {
-      setEnrolledUserIds([]);
+      setEnrolledUserIds([])
     }
-  }, [selectedChallenge, token]);
+  }, [selectedChallenge, token])
 
+  // Handle enrolling a user in the selected challenge
   const handleEnroll = (userId) => {
     if (!selectedChallenge) {
       setSnackbar({
         open: true,
         message: "Please select a challenge first.",
         severity: "error",
-      });
-      return;
+      })
+      return
     }
     userEnrollment({ userId, challengeId: selectedChallenge }, token)
       .then((res) => {
@@ -111,16 +124,17 @@ const EnrollUser = () => {
           open: true,
           message: res.data.message || "Enrolled!",
           severity: "success",
-        });
-        return getChallengeById(selectedChallenge, token);
+        })
+        // Refresh enrolled user IDs after enrollment
+        return getChallengeById(selectedChallenge, token)
       })
       .then((challenge) => {
         const ids = Array.isArray(challenge.participants)
           ? challenge.participants.map((u) =>
               typeof u === "string" ? u : String(u._id)
             )
-          : [];
-        setEnrolledUserIds(ids);
+          : []
+        setEnrolledUserIds(ids)
       })
       .catch((err) =>
         setSnackbar({
@@ -130,29 +144,27 @@ const EnrollUser = () => {
             "Enrollment failed. User may already be enrolled.",
           severity: "error",
         })
-      );
-  };
+      )
+  }
 
+  // Filter users by search input
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(search.toLowerCase()) ||
       user.email.toLowerCase().includes(search.toLowerCase())
-  );
+  )
 
   return (
     <div>
+      {/* Top navigation bar */}
       <Navbar user={user} onLogout={handleLogout} />
       <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* Page title */}
         <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
           User Enrollment
         </Typography>
-        <Box
-          display="flex"
-          gap={2}
-          mb={3}
-          alignItems="center"
-          flexWrap="wrap"
-        >
+        {/* Search bar and challenge select dropdown */}
+        <Box display="flex" gap={2} mb={3} alignItems="center" flexWrap="wrap">
           <TextField
             label="Search users"
             variant="outlined"
@@ -179,6 +191,7 @@ const EnrollUser = () => {
             ))}
           </Select>
         </Box>
+        {/* Users table */}
         <Table
           sx={{
             border: "1px solid #e0e0e0",
@@ -199,6 +212,7 @@ const EnrollUser = () => {
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
+                  {/* Show Enrolled or Enroll button */}
                   {enrolledUserIds.includes(String(user._id)) ? (
                     <span style={{ color: "#4caf50" }}>Enrolled</span>
                   ) : (
@@ -222,6 +236,7 @@ const EnrollUser = () => {
           </TableBody>
         </Table>
       </Container>
+      {/* Snackbar for feedback messages */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
@@ -239,7 +254,7 @@ const EnrollUser = () => {
         </MuiAlert>
       </Snackbar>
     </div>
-  );
-};
+  )
+}
 
-export default EnrollUser;
+export default EnrollUser

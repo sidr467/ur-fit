@@ -2,6 +2,12 @@ import React from "react"
 import { Link, useLocation } from "react-router-dom"
 import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material"
 
+/**
+ * Navbar Component
+ * ----------------
+ * Displays the top navigation bar for the UR Fit app.
+ */
+
 const Navbar = ({ user, onLogout }) => {
   const location = useLocation()
 
@@ -16,20 +22,24 @@ const Navbar = ({ user, onLogout }) => {
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
+        {/* App title */}
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           UR Fit
         </Typography>
         <Box sx={{ display: "flex", gap: "24px", alignItems: "center" }}>
+          {/* Home link */}
           <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
             <Typography>Home</Typography>
           </Link>
+          {/* Challenges link */}
           <Link
             to="/challenges"
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <Typography>Challenges</Typography>
           </Link>
-           {user && user.role === "coordinator" && (
+          {/* Enrollment link only for coordinators */}
+          {user && user.role === "coordinator" && (
             <Link
               to="/enrollment"
               style={{ textDecoration: "none", color: "inherit" }}
@@ -37,7 +47,9 @@ const Navbar = ({ user, onLogout }) => {
               <Typography>Enrollment</Typography>
             </Link>
           )}
+          {/* Auth buttons: Logout for logged-in, Sign In/Sign Up for guests */}
           {user ? (
+            // Logout button for authenticated users
             <Button
               onClick={onLogout}
               variant="contained"
@@ -56,6 +68,7 @@ const Navbar = ({ user, onLogout }) => {
               Logout
             </Button>
           ) : location.pathname === "/signup" ? (
+            // Show Sign In button if on signup page
             <Button
               component={Link}
               to="/login"
@@ -75,6 +88,7 @@ const Navbar = ({ user, onLogout }) => {
               Sign In
             </Button>
           ) : location.pathname === "/login" ? (
+            // Show Sign Up button if on login page
             <Button
               component={Link}
               to="/signup"
@@ -94,6 +108,7 @@ const Navbar = ({ user, onLogout }) => {
               Sign Up
             </Button>
           ) : (
+            // Show both Sign In and Sign Up buttons on other pages for guests
             <>
               <Button
                 component={Link}

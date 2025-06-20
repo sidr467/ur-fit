@@ -10,13 +10,20 @@ import {
   FormControlLabel,
   FormControl,
   FormLabel,
-  Paper
+  Paper,
 } from "@mui/material"
 import sideImage from "../../assets/Skipping.png"
 import { signup as signupService } from "../../services/api"
 import Navbar from "../Navbar"
 
+/**
+ * SignUpPage Component
+ * --------------------
+ * Renders the signup (registration) page for UR Fit.
+ */
+
 const SignUpPage = () => {
+  // State for form fields, error, and success messages
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,11 +34,13 @@ const SignUpPage = () => {
   const [success, setSuccess] = useState("")
   const navigate = useNavigate()
 
+  // Handle input changes for form fields
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Handle form submission and signup logic
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
@@ -62,7 +71,8 @@ const SignUpPage = () => {
         backgroundColor: "#f5f5f5",
       }}
     >
-      <Navbar></Navbar>
+      {/* Navbar component for navigation and logout */}
+      <Navbar />
 
       <Box
         sx={{
@@ -71,6 +81,7 @@ const SignUpPage = () => {
           overflow: "hidden",
         }}
       >
+        {/* Left side image*/}
         <Box
           sx={{
             flex: 1,
@@ -93,6 +104,7 @@ const SignUpPage = () => {
           />
         </Box>
 
+        {/* Right side: signup form */}
         <Box
           sx={{
             flex: 1,
@@ -122,6 +134,7 @@ const SignUpPage = () => {
               Create Account
             </Typography>
 
+            {/* Signup form */}
             <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
@@ -161,6 +174,7 @@ const SignUpPage = () => {
                 required
               />
 
+              {/* Role selection radio buttons */}
               <FormControl component="fieldset" sx={{ mb: 3, width: "100%" }}>
                 <FormLabel component="legend">Role</FormLabel>
                 <RadioGroup
@@ -182,6 +196,7 @@ const SignUpPage = () => {
                 </RadioGroup>
               </FormControl>
 
+              {/* Show error or success messages */}
               {error && (
                 <Typography color="error" sx={{ mb: 2 }}>
                   {error}
@@ -208,14 +223,15 @@ const SignUpPage = () => {
               </Button>
             </form>
 
+            {/* Link to login page */}
             <Typography align="center">
               Already have an account?{" "}
               <Link to="/login" style={{ color: "black", fontWeight: "bold" }}>
                 Sign in
               </Link>
             </Typography>
-            </Paper>
-          </Box>
+          </Paper>
+        </Box>
       </Box>
     </Box>
   )

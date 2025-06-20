@@ -13,24 +13,36 @@ import ExpandedChallengeCard from "../components/ExpandedChallengeCard"
 import Snackbar from "@mui/material/Snackbar"
 import MuiAlert from "@mui/material/Alert"
 
+/**
+ * Challenges Page
+ * ---------------
+ * Displays all wellness challenges and the user's joined challenges.
+ */
+
 const Challenges = () => {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
+  // State for all challenges and joined challenges
   const [allChallenges, setAllChallenges] = useState([])
   const [joinedChallenges, setJoinedChallenges] = useState([])
   const [loading, setLoading] = useState(true)
+  // Toggle between card and expanded (detailed) view
   const [useExpandedView, setUseExpandedView] = useState(false)
+  // Search input state
   const [search, setSearch] = useState("")
+  // Tab state: 0 = All Challenges, 1 = My Challenges (with persistence)
   const [tab, setTab] = useState(() => {
     const savedTab = localStorage.getItem("challengesTab")
     return savedTab !== null ? Number(savedTab) : 0
   })
+  // Snackbar state for feedback messages
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   })
 
+  // Decode user from JWT token if available
   let user = null
   try {
     if (token) user = jwtDecode(token)
@@ -38,6 +50,7 @@ const Challenges = () => {
     user = null
   }
 
+  // Fetch all challenges from API
   const fetchAll = async () => {
     setLoading(true)
     const res = await getAllChallenges(token)
@@ -45,6 +58,7 @@ const Challenges = () => {
     setLoading(false)
   }
 
+  // Fetch joined challenges from API
   const fetchJoined = async () => {
     setLoading(true)
     const res = await getJoinedChallenges(token)
@@ -52,6 +66,7 @@ const Challenges = () => {
     setLoading(false)
   }
 
+  // Filter all challenges by search input
   const filteredAllChallenges = allChallenges.filter(
     (challenge) =>
       challenge.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -59,6 +74,7 @@ const Challenges = () => {
         challenge.description.toLowerCase().includes(search.toLowerCase()))
   )
 
+  // Filter joined challenges by search input
   const filteredJoinedChallenges = joinedChallenges.filter(
     (challenge) =>
       challenge.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -66,6 +82,7 @@ const Challenges = () => {
         challenge.description.toLowerCase().includes(search.toLowerCase()))
   )
 
+  // On mount: check auth, redirect if needed, and fetch data
   useEffect(() => {
     if (!user) {
       navigate("/login")
@@ -79,6 +96,7 @@ const Challenges = () => {
     fetchJoined()
   }, [])
 
+  // Handle joining a challenge
   const handleJoin = async (challengeId) => {
     await joinChallenge(challengeId, token)
     setSnackbar({
@@ -90,11 +108,13 @@ const Challenges = () => {
     fetchJoined()
   }
 
+  // Handle tab change and persist selected tab
   const handleTabChange = (_, v) => {
     setTab(v)
-    localStorage.setItem("challengesTab", v) // Save tab index
+    localStorage.setItem("challengesTab", v)
   }
 
+  // Check if a challenge is already joined
   const isJoined = (challengeId) =>
     joinedChallenges.some((c) => c._id === challengeId)
 
@@ -102,6 +122,7 @@ const Challenges = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
+      {/* Top navigation bar */}
       <Navbar
         user={user}
         onLogout={() => {
@@ -111,6 +132,7 @@ const Challenges = () => {
       />
 
       <Container maxWidth="lg" style={{ padding: "2px 0" }}>
+        {/* Page title and welcome message */}
         <h1
           style={{ fontSize: "28px", fontWeight: "bold", marginBottom: "2px" }}
         >
@@ -119,6 +141,7 @@ const Challenges = () => {
         <p style={{ fontSize: "16px", color: "#666" }}>
           Welcome to UR Fit, {user?.name || "User"}!
         </p>
+        {/* Search bar and view toggle button */}
         <div
           style={{
             display: "flex",
@@ -159,6 +182,7 @@ const Challenges = () => {
           </button>
         </div>
 
+        {/* Tabs for All Challenges and My Challenges */}
         <Tabs
           value={tab}
           onChange={handleTabChange}
@@ -194,6 +218,7 @@ const Challenges = () => {
           />
         </Tabs>
 
+        {/* Loading spinner */}
         {loading ? (
           <div
             style={{
@@ -205,6 +230,7 @@ const Challenges = () => {
             <CircularProgress size={60} />
           </div>
         ) : (
+          // Challenges grid
           <div
             style={{
               display: "grid",
@@ -214,6 +240,7 @@ const Challenges = () => {
                 : "repeat(auto-fill, minmax(300px, 1fr))",
             }}
           >
+            {/* All Challenges tab */}
             {tab === 0 ? (
               filteredAllChallenges.length === 0 ? (
                 <div
@@ -228,6 +255,7 @@ const Challenges = () => {
                   </p>
                 </div>
               ) : (
+                // Show only challenges not already joined
                 filteredAllChallenges
                   .filter((challenge) => !isJoined(challenge._id))
                   .map((challenge) =>
@@ -249,6 +277,7 @@ const Challenges = () => {
                   )
               )
             ) : filteredJoinedChallenges.length === 0 ? (
+              // My Challenges tab, but no joined challenges
               <div
                 style={{
                   gridColumn: "1 / -1",
@@ -261,6 +290,7 @@ const Challenges = () => {
                 </p>
               </div>
             ) : (
+              // Show joined challenges
               filteredJoinedChallenges.map((challenge) =>
                 useExpandedView ? (
                   <ExpandedChallengeCard
@@ -282,6 +312,7 @@ const Challenges = () => {
           </div>
         )}
       </Container>
+      {/* Snackbar for feedback messages */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

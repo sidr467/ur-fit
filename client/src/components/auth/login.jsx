@@ -6,7 +6,14 @@ import { login as loginService } from "../../services/api"
 import Navbar from "../Navbar"
 import { jwtDecode } from "jwt-decode"
 
+/**
+ * LoginPage Component
+ * -------------------
+ * Renders the login page for UR Fit.
+ */
+
 const LoginPage = () => {
+  //State management for form data and error messages
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -14,11 +21,13 @@ const LoginPage = () => {
   const [error, setError] = useState("")
   const navigate = useNavigate()
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Handle form submission and authentication
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
@@ -28,8 +37,11 @@ const LoginPage = () => {
         setError(res.data.message || "Login failed")
         return
       }
+      // Store token in localStorage and decode user info
       localStorage.setItem("token", res.data.token)
       const user = jwtDecode(res.data.token)
+
+      // Redirect based on user role
       if (user.role === "coordinator") {
         navigate("/coordinator-challenges")
       } else {
@@ -49,6 +61,7 @@ const LoginPage = () => {
         backgroundColor: "#f5f5f5",
       }}
     >
+      {/* Navbar component for navigation and logout */}
       <Navbar />
 
       <Box
@@ -58,6 +71,7 @@ const LoginPage = () => {
           overflow: "hidden",
         }}
       >
+        {/* Left side image */}
         <Box
           sx={{
             flex: 1,
@@ -80,13 +94,14 @@ const LoginPage = () => {
           />
         </Box>
 
+        {/* Right side: login form */}
         <Box
           sx={{
             flex: 1,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "f5f5f5",
+            backgroundColor: "#f5f5f5",
             overflowY: "auto",
             padding: "20px",
           }}
@@ -109,6 +124,7 @@ const LoginPage = () => {
               Sign in
             </Typography>
 
+            {/* Login form with email and password fields */}
             <form onSubmit={handleSubmit} style={{ width: "100%" }}>
               <TextField
                 fullWidth
@@ -133,6 +149,7 @@ const LoginPage = () => {
                 sx={{ mb: 3 }}
               />
 
+              {/* Show error message if login fails */}
               {error && (
                 <Typography color="error" sx={{ mb: 2 }}>
                   {error}
@@ -157,6 +174,7 @@ const LoginPage = () => {
               </Button>
             </form>
 
+            {/* Link to signup page */}
             <Typography align="center">
               Don't have an account?{" "}
               <Link to="/signup" style={{ color: "black", fontWeight: "bold" }}>

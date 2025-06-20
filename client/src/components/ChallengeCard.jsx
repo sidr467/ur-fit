@@ -1,6 +1,13 @@
 import React from "react"
 import { Link } from "react-router-dom"
-import { Button, Card, CardContent, Typography,Chip } from "@mui/material"
+import { Button, Card, CardContent, Typography, Chip } from "@mui/material"
+
+/**
+ * ChallengeCard Component
+ * -----------------------
+ * Displays a summary card for a challenge, including image, title, description,
+ * duration, participant count, and a join/edit button.
+ */
 
 const ChallengeCard = ({
   challenge,
@@ -9,6 +16,7 @@ const ChallengeCard = ({
   isCoordinator = false,
   userRole,
 }) => {
+  // Determine the link for the challenge based on user role
   const challengeLink =
     userRole === "coordinator"
       ? `/coordinator/challenges/${challenge._id}`
@@ -35,6 +43,7 @@ const ChallengeCard = ({
           overflow: "hidden",
         }}
       >
+        {/* Show challenge image if available */}
         {challenge.imageUrl && (
           <img
             src={challenge.imageUrl}
@@ -50,6 +59,7 @@ const ChallengeCard = ({
 
       {/* Content Section */}
       <CardContent style={{ flex: 1 }}>
+        {/* Challenge title as a link */}
         <Typography
           variant="h6"
           component="h3"
@@ -67,6 +77,7 @@ const ChallengeCard = ({
           </Link>
         </Typography>
 
+        {/* Challenge description */}
         <Typography
           variant="body2"
           color="textSecondary"
@@ -84,6 +95,7 @@ const ChallengeCard = ({
             borderTop: "1px solid #f0f0f0",
           }}
         >
+          {/* Chips for duration and participant count */}
           <div style={{ display: "flex", gap: "8px" }}>
             <Chip
               label={`${challenge.totalDays} Days`}
@@ -99,6 +111,7 @@ const ChallengeCard = ({
 
       {/* Button Section */}
       <div style={{ padding: "0 16px 16px 16px" }}>
+        {/* Show Edit button for coordinators, Join/Already Joined for participants */}
         {isCoordinator ? (
           <Button
             fullWidth

@@ -29,6 +29,12 @@ import {
 import EditableList from "../components/EditableList"
 import Navbar from "../components/Navbar"
 
+/**
+ * CoordinatorManageChallenge Page
+ * -------------------------------
+ * Allows coordinators to view, edit, and manage a single challenge.
+ */
+
 const CoordinatorManageChallenge = () => {
   const { id } = useParams()
   const [challenge, setChallenge] = useState(null)
@@ -44,12 +50,14 @@ const CoordinatorManageChallenge = () => {
   })
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
+  // Decode user from JWT token if available
   try {
     if (token) user = jwtDecode(token)
   } catch {
     user = null
   }
 
+  // When challenge loads, set edit fields for editing
   useEffect(() => {
     if (challenge) {
       setEditFields({
@@ -60,6 +68,7 @@ const CoordinatorManageChallenge = () => {
     }
   }, [challenge])
 
+  // Redirect to login if not authenticated or not a coordinator
   useEffect(() => {
     if (!token) {
       navigate("/login")
@@ -75,6 +84,7 @@ const CoordinatorManageChallenge = () => {
     }
   }, [token, navigate])
 
+  // Fetch challenge data by ID
   useEffect(() => {
     const fetchChallenge = async () => {
       setLoading(true)
@@ -89,11 +99,13 @@ const CoordinatorManageChallenge = () => {
     fetchChallenge()
   }, [id])
 
+  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/login")
   }
 
+  // Show loading spinner while fetching data
   if (loading) {
     return (
       <Box
@@ -107,6 +119,7 @@ const CoordinatorManageChallenge = () => {
     )
   }
 
+  // Show error if challenge not found
   if (!challenge) {
     return (
       <Box
@@ -124,8 +137,10 @@ const CoordinatorManageChallenge = () => {
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
+      {/* Top navigation bar */}
       <Navbar user={user} onLogout={handleLogout} />
       <Container sx={{ py: 6 }}>
+        {/* Top: Image and Details */}
         <Box
           display="grid"
           gridTemplateAreas={`"image details"`}
@@ -133,6 +148,7 @@ const CoordinatorManageChallenge = () => {
           gap={4}
           alignItems="center"
         >
+          {/* Challenge image */}
           <Box gridArea="image" display="flex" justifyContent="center">
             {challenge.imageUrl && (
               <img
@@ -143,9 +159,11 @@ const CoordinatorManageChallenge = () => {
             )}
           </Box>
 
+          {/* Challenge details and edit mode */}
           <Box gridArea="details">
             {editMode ? (
               <>
+                {/* Edit fields for title, description, long description */}
                 <TextField
                   label="Title"
                   value={editFields.title}
@@ -181,6 +199,7 @@ const CoordinatorManageChallenge = () => {
                   minRows={3}
                   sx={{ mb: 2 }}
                 />
+                {/* Save and Cancel buttons */}
                 <Button
                   variant="contained"
                   sx={{ mr: 2, backgroundColor: "#000" }}
@@ -194,7 +213,7 @@ const CoordinatorManageChallenge = () => {
                       )
                       setChallenge(updated)
                     } catch (err) {
-                      //handle error
+                      // handle error
                     }
                   }}
                 >
@@ -206,6 +225,7 @@ const CoordinatorManageChallenge = () => {
               </>
             ) : (
               <>
+                {/* Challenge title, description, long description */}
                 <Typography variant="h4" fontWeight={700} gutterBottom>
                   {challenge.title}
                 </Typography>
@@ -220,11 +240,13 @@ const CoordinatorManageChallenge = () => {
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   {challenge.longDescription}
                 </Typography>
+                {/* Chips for duration and participant count */}
                 <Box sx={{ mb: 2 }}>
                   <Chip label={`${challenge.totalDays} Days`} sx={{ mr: 2 }} />
                   <Chip label={`${challenge.participantCount} Participants`} />
                 </Box>
                 <Divider />
+                {/* Edit and Delete buttons */}
                 <Button
                   variant="outlined"
                   sx={{ mt: 2 }}
@@ -250,6 +272,7 @@ const CoordinatorManageChallenge = () => {
             )}
           </Box>
         </Box>
+        {/* Bottom: Editable lists for links and PDFs */}
         <Box
           display="grid"
           gridTemplateColumns="1fr 1fr"
@@ -257,6 +280,7 @@ const CoordinatorManageChallenge = () => {
           gap={4}
           mt={4}
         >
+          {/* External Links editable list */}
           <Box gridArea="links">
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               External Links
@@ -282,7 +306,7 @@ const CoordinatorManageChallenge = () => {
               type="link"
             />
           </Box>
-          {/* Bottom Right PDFs */}
+          {/* PDF Resources editable list */}
           <Box gridArea="pdfs">
             <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 2 }}>
               PDF Resources
@@ -310,6 +334,7 @@ const CoordinatorManageChallenge = () => {
           </Box>
         </Box>
       </Container>
+      {/* Delete confirmation dialog */}
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

@@ -3,6 +3,12 @@ import { Button, TextField, Box, Typography, IconButton } from "@mui/material"
 import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Delete"
 
+/**
+ * EditableList Component
+ * ----------------------
+ * Renders an editable list of items (links, PDFs, etc.) with add, edit, and delete functionality.
+ */
+
 const EditableList = ({
   items,
   onUpdate,
@@ -11,13 +17,16 @@ const EditableList = ({
   label = "Item",
   type = "link",
 }) => {
+  // State for editable values and new item input
   const [editValues, setEditValues] = useState(items || [])
   const [newValue, setNewValue] = useState("")
 
+  // Sync editValues with items prop when it changes
   React.useEffect(() => {
     setEditValues(items || [])
   }, [items])
 
+  // Handle editing an existing item
   const handleEdit = (idx, value) => {
     setEditValues((prev) => {
       const updated = [...prev]
@@ -26,12 +35,14 @@ const EditableList = ({
     })
   }
 
+  // Call onUpdate when an item loses focus and has changed
   const handleBlur = (idx, value) => {
     if (value !== items[idx]) {
       onUpdate(idx, value)
     }
   }
 
+  // Add a new item to the list
   const handleAdd = () => {
     if (newValue.trim()) {
       onAdd(newValue.trim())
@@ -39,6 +50,7 @@ const EditableList = ({
     }
   }
 
+  // Delete an item from the list
   const handleDelete = (idx) => {
     if (onDelete) {
       onDelete(idx)
@@ -47,9 +59,11 @@ const EditableList = ({
 
   return (
     <Box>
+      {/* List label/title */}
       <Typography variant="h6" sx={{ mb: 1 }}>
         {label}
       </Typography>
+      {/* Render each editable item */}
       {editValues.map((item, idx) => (
         <Box key={idx} display="flex" alignItems="center" mb={1}>
           <TextField
@@ -59,12 +73,13 @@ const EditableList = ({
             onBlur={() => handleBlur(idx, editValues[idx])}
             sx={{ mr: 1, flex: 1 }}
           />
+          {/* Delete button for the item */}
           <IconButton
             size="small"
             onClick={() => handleDelete(idx)}
             sx={{
               ml: 1,
-              color: "#ff3232", 
+              color: "#ff3232",
               "&:hover": {
                 backgroundColor: "#f0f0f0",
               },
@@ -75,6 +90,7 @@ const EditableList = ({
           </IconButton>
         </Box>
       ))}
+      {/* Add new item input and button */}
       <Box display="flex" alignItems="center">
         <TextField
           value={newValue}

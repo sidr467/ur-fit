@@ -1,6 +1,13 @@
+/**
+ * challengeController.js
+ * ----------------------
+ * Controller functions for managing wellness challenges in the UR Fit backend.
+ */
+
 const Challenge = require("../models/Challenge")
 const User = require("../models/User")
 
+// Create a new challenge
 exports.createChallenge = async (req, res) => {
   const {
     title,
@@ -32,6 +39,7 @@ exports.createChallenge = async (req, res) => {
   }
 }
 
+// Get all challenges
 exports.getChallenges = async (req, res) => {
   try {
     const challenges = await Challenge.find().populate(
@@ -44,6 +52,7 @@ exports.getChallenges = async (req, res) => {
   }
 }
 
+// Get a challenge by its ID
 exports.getChallengeById = async (req, res) => {
   const { id } = req.params
 
@@ -61,6 +70,7 @@ exports.getChallengeById = async (req, res) => {
   }
 }
 
+// Participant joins a challenge
 exports.joinChallenge = async (req, res) => {
   const challengeId = req.params.id
   const userId = req.user.userId
@@ -71,6 +81,7 @@ exports.joinChallenge = async (req, res) => {
       return res.status(404).json({ message: "Challenge not found" })
     }
 
+    // Prevent duplicate join
     if (challenge.participants.includes(userId)) {
       return res.status(400).json({ message: "Already joined this challenge" })
     }
@@ -79,6 +90,7 @@ exports.joinChallenge = async (req, res) => {
     challenge.participantCount = challenge.participants.length
     await challenge.save()
 
+    // Add challenge to user's joinedChallenges
     await User.findByIdAndUpdate(userId, {
       $addToSet: { joinedChallenges: challengeId },
     })
@@ -91,6 +103,7 @@ exports.joinChallenge = async (req, res) => {
   }
 }
 
+// Get all challenges joined by the current user
 exports.getUserJoinedChallenges = async (req, res) => {
   const userId = req.user.userId
 
@@ -105,6 +118,7 @@ exports.getUserJoinedChallenges = async (req, res) => {
   }
 }
 
+// Coordinator enrolls a user in a challenge
 exports.userEnrollment = async (req, res) => {
   try {
     if (req.user.role !== "coordinator") {
@@ -123,6 +137,7 @@ exports.userEnrollment = async (req, res) => {
       return res.status(404).json({ message: "Challenge not found" })
     }
 
+    // Prevent duplicate enrollment
     if (challenge.participants.includes(userId)) {
       return res
         .status(400)
@@ -142,6 +157,7 @@ exports.userEnrollment = async (req, res) => {
   }
 }
 
+// Add a new external link to a challenge
 exports.addChallengeLink = async (req, res) => {
   const { id } = req.params;
   const { link } = req.body;
@@ -161,6 +177,7 @@ exports.addChallengeLink = async (req, res) => {
   }
 };
 
+// Update a single external link by index
 exports.updateSingleChallengeLink = async (req, res) => {
   const { id } = req.params;
   const { index, newLink } = req.body; 
@@ -185,6 +202,7 @@ exports.updateSingleChallengeLink = async (req, res) => {
   }
 };
 
+// Add a new PDF resource to a challenge
 exports.addChallengePdf = async (req, res) => {
   const { id } = req.params;
   const { pdf } = req.body;
@@ -204,6 +222,7 @@ exports.addChallengePdf = async (req, res) => {
   }
 };
 
+// Update a single PDF resource by index
 exports.updateSingleChallengePdf = async (req, res) => {
   const { id } = req.params;
   const { index, newPdf } = req.body; 
@@ -278,6 +297,7 @@ exports.deleteSingleChallengePdf = async (req, res) => {
   }
 };
 
+// Edit challenge details (title, description, longDescription)
 exports.editChallenge = async (req, res) => {
   const { id } = req.params;
   const { title, description, longDescription } = req.body;
@@ -300,6 +320,7 @@ exports.editChallenge = async (req, res) => {
   }
 };
 
+// Delete a challenge and remove it from users' joinedChallenges
 exports.deleteChallenge = async (req, res) => {
   const { id } = req.params;
   try {
@@ -307,7 +328,7 @@ exports.deleteChallenge = async (req, res) => {
     if (!challenge) {
       return res.status(404).json({ message: "Challenge not found" });
     }
-    // Optionally, remove this challenge from users' joinedChallenges arrays
+    // Remove challenge from all users' joinedChallenges arrays
     await User.updateMany(
       { joinedChallenges: id },
       { $pull: { joinedChallenges: id } }

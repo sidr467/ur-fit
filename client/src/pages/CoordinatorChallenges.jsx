@@ -13,22 +13,31 @@ import { getAllChallenges, createChallenge } from "../services/api"
 import ChallengeModal from "../components/ChallengeModal"
 import ChallengeCard from "../components/ChallengeCard"
 
+/**
+ * CoordinatorChallenges Page
+ * --------------------------
+ * Displays the dashboard for coordinators to manage wellness challenges.
+ */
+
 const CoordinatorChallenges = () => {
   const navigate = useNavigate()
   const token = localStorage.getItem("token")
   let user = null
 
+  // Decode user from JWT token if available
   try {
     if (token) user = jwtDecode(token)
   } catch {
     user = null
   }
 
+  // State for challenges, loading, modal, and search input
   const [challenges, setChallenges] = useState([])
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
   const [search, setSearch] = useState("")
 
+  // On mount: check auth, redirect if needed, and fetch challenges
   useEffect(() => {
     if (!user) {
       navigate("/login")
@@ -41,11 +50,13 @@ const CoordinatorChallenges = () => {
     fetchChallenges()
   }, [])
 
+  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("token")
     navigate("/login")
   }
 
+  // Fetch all challenges from API
   const fetchChallenges = async () => {
     setLoading(true)
     const res = await getAllChallenges(token)
@@ -53,6 +64,7 @@ const CoordinatorChallenges = () => {
     setLoading(false)
   }
 
+  // Filter challenges by search input
   const filteredChallenges = challenges.filter(
     (challenge) =>
       challenge.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,6 +72,7 @@ const CoordinatorChallenges = () => {
         challenge.description.toLowerCase().includes(search.toLowerCase()))
   )
 
+  // Handle creation of a new challenge
   const handleCreateChallenge = async (challengeData) => {
     try {
       await createChallenge(challengeData, token)
@@ -70,18 +83,22 @@ const CoordinatorChallenges = () => {
     }
   }
 
+  // If not a coordinator, render nothing
   if (!user || user.role !== "coordinator") return null
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#f9f9f9" }}>
+      {/* Top navigation bar */}
       <Navbar user={user} onLogout={handleLogout} />
       <Container maxWidth="lg" style={{ padding: "32px 0" }}>
+        {/* Page title */}
         <Typography
           variant="h4"
           style={{ fontWeight: "bold", marginBottom: "16px" }}
         >
           Coordinator Dashboard
         </Typography>
+        {/* Search bar and Create Challenge button */}
         <div
           style={{
             display: "flex",
@@ -113,6 +130,7 @@ const CoordinatorChallenges = () => {
           </Button>
         </div>
 
+        {/* Loading spinner, empty state, or challenges grid */}
         {loading ? (
           <div
             style={{
@@ -130,6 +148,7 @@ const CoordinatorChallenges = () => {
             </Typography>
           </div>
         ) : (
+          // Challenges grid
           <div
             style={{
               display: "grid",
@@ -150,6 +169,7 @@ const CoordinatorChallenges = () => {
           </div>
         )}
 
+        {/* Modal for creating a new challenge */}
         <ChallengeModal
           open={modalOpen}
           onClose={() => setModalOpen(false)}
