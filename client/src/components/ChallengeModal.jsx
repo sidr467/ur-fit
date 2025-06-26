@@ -11,6 +11,7 @@ import {
   IconButton,
 } from "@mui/material"
 import CloseIcon from "@mui/icons-material/Close"
+import API from "../services/api"
 
 /**
  * ChallengeModal Component
@@ -52,12 +53,15 @@ const ChallengeModal = ({ open, onClose, onCreate }) => {
     if (imageFile) {
       const data = new FormData()
       data.append("image", imageFile)
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: data,
-      })
-      const result = await res.json()
-      imageUrl = result.imageUrl
+      try {
+        const res = await API.post("/upload", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+        imageUrl = res.data.imageUrl
+      } catch (err) {
+        setError("Image upload failed.")
+        return
+      }
     }
 
     // Validate required fields
