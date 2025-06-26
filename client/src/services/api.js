@@ -115,13 +115,13 @@ export const deleteSingleChallengePdf = (id, index, token) =>
 
 // Edit challenge details
 export const editChallenge = async (id, data, token) =>
-  API.put(`/api/challenges/${id}/edit`, data, {
+  API.put(`/challenges/${id}/edit`, data, {
     headers: { Authorization: `Bearer ${token}` },
   })
 
 // Delete a challenge
 export const deleteChallenge = async (id, token) =>
-  API.delete(`/api/challenges/${id}`, {
+  API.delete(`/challenges/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
 
