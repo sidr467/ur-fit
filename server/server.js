@@ -19,10 +19,10 @@ const app = express()
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: [
-      "https://ur-fit.vercel.app",
-      "http://localhost:5173", 
-    ],
+    origin: ["https://ur-fit.vercel.app", "http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 )
 // Parse incoming JSON requests
