@@ -8,7 +8,7 @@ import axios from "axios"
 
 // Create an Axios instance with the base API URL
 const API = axios.create({
-  baseURL: "http://localhost:3002/api",
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3002/api",
 })
 
 // Authentication endpoints
@@ -115,13 +115,13 @@ export const deleteSingleChallengePdf = (id, index, token) =>
 
 // Edit challenge details
 export const editChallenge = async (id, data, token) =>
-  axios.put(`/api/challenges/${id}/edit`, data, {
+  API.put(`/api/challenges/${id}/edit`, data, {
     headers: { Authorization: `Bearer ${token}` },
   })
 
 // Delete a challenge
 export const deleteChallenge = async (id, token) =>
-  axios.delete(`/api/challenges/${id}`, {
+  API.delete(`/api/challenges/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
 

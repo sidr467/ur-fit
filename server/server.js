@@ -17,7 +17,14 @@ connectDB()
 
 const app = express()
 // Enable CORS for all routes
-app.use(cors())
+app.use(
+  cors({
+    origin: [
+      "https://ur-fit.vercel.app/",
+      "http://localhost:5173", 
+    ],
+  })
+)
 // Parse incoming JSON requests
 app.use(express.json())
 // Serve static files from the /public directory
