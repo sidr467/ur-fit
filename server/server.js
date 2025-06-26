@@ -20,7 +20,7 @@ const app = express()
 app.use(
   cors({
     origin: [
-      "https://ur-fit.vercel.app/",
+      "https://ur-fit.vercel.app",
       "http://localhost:5173", 
     ],
   })
